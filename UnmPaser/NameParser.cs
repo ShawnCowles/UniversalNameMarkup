@@ -30,6 +30,26 @@ namespace UnmParser
 
         public string Process(string pattern, List<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
         {
+            return Process(pattern, context, variables, new List<string>(), capScheme);
+        }
+
+        public string Process(string pattern, List<string> context, Dictionary<string, string> variables, List<string> uniqueCheck, CapitalizationScheme capScheme)
+        {
+            for (int i = 0; i < 1000; i++)
+            {
+                var result = DoProcess(pattern, context, variables, capScheme);
+
+                if (!uniqueCheck.Contains(result))
+                {
+                    return result;
+                }
+            }
+
+            throw new Exception("Unable to generate unique result!");
+        }
+
+        private string DoProcess(string pattern, List<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
+        {
             _capScheme = capScheme;
             _context = context;
             _tag = "";
