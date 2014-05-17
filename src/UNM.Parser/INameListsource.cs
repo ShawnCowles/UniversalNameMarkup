@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace UnmParser
+namespace UNM.Parser
 {
     public interface INamelistSource
     {

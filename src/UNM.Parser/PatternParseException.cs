@@ -1,6 +1,6 @@
 using System;
 
-namespace UnmParser
+namespace UNM.Parser
 {
 	public class PatternParseException : Exception
 	{
