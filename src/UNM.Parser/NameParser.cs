@@ -1,40 +1,105 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace UNM.Parser
 {
+    /// <summary>
+    /// The NameParser, processes patterns to produce names.
+    /// </summary>
 	public class NameParser
 	{
-		private UnmData _data;
 		private Random _random;
 		private string _tag;
-		private List<string> _context;
+        private IEnumerable<string> _context;
 		private LinkedList<UnmState> _stateStack = new LinkedList<UnmState>();
         private CapitalizationScheme _capScheme;
-		
+        private INamelistSource _namelistSource;
+
+        private bool _initialized;
+
+        /// <summary>
+        /// Construct a new NameParser.
+        /// </summary>
+        /// <param name="namelistSource">The source for namelists to use.</param>
+        /// <param name="seed">The random seed to use for NameFragment selection.</param>
 		public NameParser (INamelistSource namelistSource, int seed)
 		{
-            _data = namelistSource.LoadData();
+            _namelistSource = namelistSource;
+
 			_random = new Random(seed);
+
+            _initialized = false;
 		}
-		
+
+        /// <summary>
+        /// Initialize the NameParser.
+        /// </summary>
+        public void Initialize()
+        {
+            if (!_initialized)
+            {
+                _initialized = true;
+                _namelistSource.Initialize();
+            }
+        }
+        		
+        /// <summary>
+        /// Process a pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to process.</param>
+        /// <param name="capScheme">The CapitalizationScheme to use.</param>
+        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
+        /// <returns>The result of processing the pattern.</returns>
 		public string Process(string pattern, CapitalizationScheme capScheme)
 		{
 			return Process (pattern, new List<string>(), capScheme);
 		}
 
-        public string Process(string pattern, List<string> context, CapitalizationScheme capScheme)
+        /// <summary>
+        /// Process a pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to process.</param>
+        /// <param name="context">The contexts to use to filter NameFragments.</param>
+        /// <param name="capScheme">The CaptializationScheme to use.</param>
+        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
+        /// <returns>The result of processing the pattern.</returns>
+        public string Process(string pattern, IEnumerable<string> context, CapitalizationScheme capScheme)
 		{
             return Process(pattern, context, new Dictionary<string, string>(), capScheme);
 		}
 
-        public string Process(string pattern, List<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
+        /// <summary>
+        /// Process a pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to process.</param>
+        /// <param name="context">The contexts to use to filter NameFragments.</param>
+        /// <param name="variables">The variable values to use for external variables.</param>
+        /// <param name="capScheme">The capitalization scheme to use.</param>
+        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
+        /// <returns>The result of processing the pattern.</returns>
+        public string Process(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
         {
             return Process(pattern, context, variables, new List<string>(), capScheme);
         }
 
-        public string Process(string pattern, List<string> context, Dictionary<string, string> variables, List<string> uniqueCheck, CapitalizationScheme capScheme)
+        /// <summary>
+        /// Process a pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to process.</param>
+        /// <param name="context">The contexts to use to filter NameFragments.</param>
+        /// <param name="variables">The variable values to use for external variables.</param>
+        /// <param name="uniqueCheck">The list of names to check against for uniqueness.</param>
+        /// <param name="capScheme">The capitalization scheme to use.</param>
+        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
+        /// <returns>The result of processing the pattern.</returns>
+        public string Process(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, List<string> uniqueCheck, CapitalizationScheme capScheme)
         {
+            if (!_initialized)
+            {
+                throw new PatternParseException("NameParser is uninitialized. Call Initialize before Process");
+            }
+
             for (int i = 0; i < 1000; i++)
             {
                 var result = DoProcess(pattern, context, variables, capScheme);
@@ -45,10 +110,10 @@ namespace UNM.Parser
                 }
             }
 
-            throw new Exception("Unable to generate unique result!");
+            throw new PatternParseException("Unable to generate unique result!");
         }
 
-        private string DoProcess(string pattern, List<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
+        private string DoProcess(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
         {
             _capScheme = capScheme;
             _context = context;
@@ -78,7 +143,7 @@ namespace UNM.Parser
                 case CapitalizationScheme.BY_WORDS: outString = CaptializeByWords(outString); break;
                 case CapitalizationScheme.FIRST_LETTER: outString = CaptializeByFirstLetter(outString); break;
                 case CapitalizationScheme.NONE: break;
-                case CapitalizationScheme.SENTENCE: outString = CapitalizeBySentence(outString); break;
+                case CapitalizationScheme.BY_SENTENCE: outString = CapitalizeBySentence(outString); break;
             }
 
             return outString;
@@ -322,7 +387,7 @@ namespace UNM.Parser
 
 		private string ProcessTag()
 		{
-			var list = _data.GetList(_tag);
+			var list = _namelistSource.GetNamelist(_tag);
 			
 			var fragments = list.FragmentsForContext(_context);
 			
@@ -397,7 +462,7 @@ namespace UNM.Parser
             }
             else
             {
-                throw new Exception("No value specified for variable: " + _tag);
+                throw new PatternParseException("No value specified for variable: " + _tag);
             }
         }
 
@@ -417,10 +482,5 @@ namespace UNM.Parser
 		{
 			NO_STATE, IN_TAG, BRANCH_TAG, CONTEXT_BRANCH_TAG, TAKE_BRANCH, IGNORE_BRANCH, NESTED_IGNORE, VARIABLE_TAG, VARIABLE_BRANCH_TAG
 		}
-
-        public enum CapitalizationScheme
-        {
-            BY_FRAGMENT, BY_WORDS, FIRST_LETTER, NONE, SENTENCE
-        }
 	}
 }
