@@ -5,7 +5,7 @@ using System.Collections.Generic;
  * Adapted from SimpleLexer by Drew Miller at: http://blogs.msdn.com/b/drew/archive/2009/12/31/a-simple-lexer-in-c-that-uses-regular-expressions.aspx
  * License unknown.
  */
-namespace UNM.Lexer
+namespace UNM.Parser.SimpleLexer
 {
     /// <summary>
     /// Interface for a lexer capable parsing an input string into a series of predefined tokens.

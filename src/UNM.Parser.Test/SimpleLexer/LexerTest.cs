@@ -1,9 +1,8 @@
 ﻿using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using UNM.Lexer;
 
-namespace UNM.Lexer.Test
+namespace UNM.Parser.SimpleLexer
 {
     [TestFixture]
     public class LexerTest

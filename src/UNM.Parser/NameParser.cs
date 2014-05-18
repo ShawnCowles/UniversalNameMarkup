@@ -14,9 +14,9 @@ namespace UNM.Parser
         private IEnumerable<string> _context;
 		private LinkedList<UnmState> _stateStack = new LinkedList<UnmState>();
         private CapitalizationScheme _capScheme;
-        private INamelistSource _namelistSource;
-
+        
         private bool _initialized;
+        private INamelistSource _namelistSource;
 
         /// <summary>
         /// Construct a new NameParser.

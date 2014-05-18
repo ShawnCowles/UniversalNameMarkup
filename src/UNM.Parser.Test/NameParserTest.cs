@@ -4,7 +4,7 @@ using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 
-namespace UNM.Parser.Test
+namespace UNM.Parser
 {
     [TestFixture]
     public class NameParserTest

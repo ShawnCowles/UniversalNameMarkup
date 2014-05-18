@@ -5,7 +5,7 @@ using System.Text.RegularExpressions;
  * Adapted from SimpleLexer by Drew Miller at: http://blogs.msdn.com/b/drew/archive/2009/12/31/a-simple-lexer-in-c-that-uses-regular-expressions.aspx
  * License unknown.
  */
-namespace UNM.Lexer
+namespace UNM.Parser.SimpleLexer
 {
     /// <summary>
     /// A regular expression based definition of a token.

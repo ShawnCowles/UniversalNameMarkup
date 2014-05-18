@@ -38,27 +38,28 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapitalizationScheme.cs" />
     <Compile Include="FileNamelistSource.cs" />
     <Compile Include="INamelistSource.cs" />
+    <Compile Include="IPatternLexer.cs" />
+    <Compile Include="PatternLexer.cs" />
+    <Compile Include="PatternToken.cs" />
+    <Compile Include="SimpleLexer\ILexer.cs" />
+    <Compile Include="SimpleLexer\Lexer.cs" />
+    <Compile Include="SimpleLexer\Token.cs" />
+    <Compile Include="SimpleLexer\TokenDefinition.cs" />
+    <Compile Include="SimpleLexer\TokenPosition.cs" />
     <Compile Include="NameFragment.cs" />
     <Compile Include="NameList.cs" />
     <Compile Include="NameParser.cs" />
     <Compile Include="PatternParseException.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TokenType.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="SimpleLexer\README.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
