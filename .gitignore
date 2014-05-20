@@ -1,5 +1,7 @@
-UnmPaser/bin/
-UnmPaser/obj/
-UnmPaser_Test/bin/
-UnmPaser_Test/obj/
 *.suo
+output/
+packages/
+src/UNM.Lexer.Test/obj/
+src/UNM.Lexer/obj/
+src/UNM.Parser.Test/obj/
+src/UNM.Parser/obj/
