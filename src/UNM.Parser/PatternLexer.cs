@@ -31,22 +31,22 @@ namespace UNM.Parser
             #region Setup token definitions
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_SUB_FRAGMENT.ToString(),
-                new Regex(@"<[a-zA-Z_-]+>")));
+                new Regex(@"<[0-9a-zA-Z_-]+>")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_SUB_VARIABLE.ToString(),
-                new Regex(@"<#[a-zA-Z_-]+>")));
+                new Regex(@"<#[0-9a-zA-Z_-]+>")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_BRANCH_CHANCE.ToString(),
-                new Regex(@"<%[a-zA-Z_-]+>")));
+                new Regex(@"<%[0-9]+>")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_BRANCH_CONTEXT.ToString(),
-                new Regex(@"<@[a-zA-Z_-]+>")));
+                new Regex(@"<@[0-9a-zA-Z_-]+>")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_BRANCH_VARIABLE.ToString(),
-                new Regex(@"<\$[a-zA-Z_-]+>")));
+                new Regex(@"<\$[0-9a-zA-Z_-]+>")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.TAG_ELSE.ToString(),
-                new Regex(@"<\|>")));
+                new Regex(@"\|")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.BRANCH_START.ToString(),
                 new Regex(@"{")));
@@ -55,7 +55,7 @@ namespace UNM.Parser
                 new Regex(@"}")));
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.CONTENT.ToString(),
-                new Regex(@"[^\|{}]+")));
+                new Regex(@"[^\|{}<>]+")));
              
             #endregion
         }

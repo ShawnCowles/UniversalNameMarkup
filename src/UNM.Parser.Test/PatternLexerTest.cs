@@ -88,8 +88,8 @@ namespace UNM.Parser
         [Test]
         public void Basic_definition_test()
         {
-            var testPattern = "<sub_fragment><#sub_variable><%branch_Chance><@branch-context>"
-                + "<$branch_Variable><|>{this is some$content<with!$oDDchar>acterz}";
+            var testPattern = "<sub_fragment><#sub_variable><%12><@branch-context>"
+                + "<$branch_Variable>|{this is some$contentwith!$oDDcharacterz}";
             
             var patternLexer = new PatternLexer(new Lexer());
             patternLexer.Initialize();
@@ -103,21 +103,46 @@ namespace UNM.Parser
             Assert.That(results[1].Type, Is.EqualTo(TokenType.TAG_SUB_VARIABLE));
             Assert.That(results[1].Value, Is.EqualTo("<#sub_variable>"));
             Assert.That(results[2].Type, Is.EqualTo(TokenType.TAG_BRANCH_CHANCE));
-            Assert.That(results[2].Value, Is.EqualTo("<%branch_Chance>"));
+            Assert.That(results[2].Value, Is.EqualTo("<%12>"));
             Assert.That(results[3].Type, Is.EqualTo(TokenType.TAG_BRANCH_CONTEXT));
             Assert.That(results[3].Value, Is.EqualTo("<@branch-context>"));
             Assert.That(results[4].Type, Is.EqualTo(TokenType.TAG_BRANCH_VARIABLE));
             Assert.That(results[4].Value, Is.EqualTo("<$branch_Variable>"));
             Assert.That(results[5].Type, Is.EqualTo(TokenType.TAG_ELSE));
-            Assert.That(results[5].Value, Is.EqualTo("<|>"));
+            Assert.That(results[5].Value, Is.EqualTo("|"));
             Assert.That(results[6].Type, Is.EqualTo(TokenType.BRANCH_START));
             Assert.That(results[6].Value, Is.EqualTo("{"));
             Assert.That(results[7].Type, Is.EqualTo(TokenType.CONTENT));
-            Assert.That(results[7].Value, Is.EqualTo("this is some$content<with!$oDDchar>acterz"));
+            Assert.That(results[7].Value, Is.EqualTo("this is some$contentwith!$oDDcharacterz"));
             Assert.That(results[8].Type, Is.EqualTo(TokenType.BRANCH_END));
             Assert.That(results[8].Value, Is.EqualTo("}"));
         }
 
+        [Test]
+        public void Somewhat_complex_pattern()
+        {
+            var testPattern = "front<%50>{middle}end";
+
+            var patternLexer = new PatternLexer(new Lexer());
+            patternLexer.Initialize();
+
+            var results = patternLexer.Process(testPattern).ToArray();
+
+            Assert.That(results.Count(), Is.EqualTo(6));
+
+            Assert.That(results[0].Type, Is.EqualTo(TokenType.CONTENT));
+            Assert.That(results[0].Value, Is.EqualTo("front"));
+            Assert.That(results[1].Type, Is.EqualTo(TokenType.TAG_BRANCH_CHANCE));
+            Assert.That(results[1].Value, Is.EqualTo("<%50>"));
+            Assert.That(results[2].Type, Is.EqualTo(TokenType.BRANCH_START));
+            Assert.That(results[2].Value, Is.EqualTo("{"));
+            Assert.That(results[3].Type, Is.EqualTo(TokenType.CONTENT));
+            Assert.That(results[3].Value, Is.EqualTo("middle"));
+            Assert.That(results[4].Type, Is.EqualTo(TokenType.BRANCH_END));
+            Assert.That(results[4].Value, Is.EqualTo("}"));
+            Assert.That(results[5].Type, Is.EqualTo(TokenType.CONTENT));
+            Assert.That(results[5].Value, Is.EqualTo("end"));
+        }
         #endregion
     }
 }

@@ -45,6 +45,7 @@
     <Compile Include="INamelistSource.cs" />
     <Compile Include="IPatternLexer.cs" />
     <Compile Include="PatternLexer.cs" />
+    <Compile Include="PatternProcessingParameters.cs" />
     <Compile Include="PatternToken.cs" />
     <Compile Include="SimpleLexer\ILexer.cs" />
     <Compile Include="SimpleLexer\Lexer.cs" />

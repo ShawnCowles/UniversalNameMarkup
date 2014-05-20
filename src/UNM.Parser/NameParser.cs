@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace UNM.Parser
 {
@@ -10,22 +11,21 @@ namespace UNM.Parser
 	public class NameParser
 	{
 		private Random _random;
-		private string _tag;
-        private IEnumerable<string> _context;
-		private LinkedList<UnmState> _stateStack = new LinkedList<UnmState>();
-        private CapitalizationScheme _capScheme;
-        
         private bool _initialized;
         private INamelistSource _namelistSource;
+        private IPatternLexer _lexer;
 
         /// <summary>
         /// Construct a new NameParser.
         /// </summary>
         /// <param name="namelistSource">The source for namelists to use.</param>
         /// <param name="seed">The random seed to use for NameFragment selection.</param>
-		public NameParser (INamelistSource namelistSource, int seed)
+        /// <param name="lexer">The <see cref="IPatternLexer"/> to use to process patterns.</param>
+		public NameParser (INamelistSource namelistSource, IPatternLexer lexer, int seed)
 		{
             _namelistSource = namelistSource;
+
+            _lexer = lexer;
 
 			_random = new Random(seed);
 
@@ -41,446 +41,338 @@ namespace UNM.Parser
             {
                 _initialized = true;
                 _namelistSource.Initialize();
+                _lexer.Initialize();
             }
         }
-        		
+        
         /// <summary>
         /// Process a pattern.
         /// </summary>
-        /// <param name="pattern">The pattern to process.</param>
-        /// <param name="capScheme">The CapitalizationScheme to use.</param>
+        /// <param name="parameters">The pattern processing parameters to use.</param>
         /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
         /// <returns>The result of processing the pattern.</returns>
-		public string Process(string pattern, CapitalizationScheme capScheme)
-		{
-			return Process (pattern, new List<string>(), capScheme);
-		}
-
-        /// <summary>
-        /// Process a pattern.
-        /// </summary>
-        /// <param name="pattern">The pattern to process.</param>
-        /// <param name="context">The contexts to use to filter NameFragments.</param>
-        /// <param name="capScheme">The CaptializationScheme to use.</param>
-        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
-        /// <returns>The result of processing the pattern.</returns>
-        public string Process(string pattern, IEnumerable<string> context, CapitalizationScheme capScheme)
-		{
-            return Process(pattern, context, new Dictionary<string, string>(), capScheme);
-		}
-
-        /// <summary>
-        /// Process a pattern.
-        /// </summary>
-        /// <param name="pattern">The pattern to process.</param>
-        /// <param name="context">The contexts to use to filter NameFragments.</param>
-        /// <param name="variables">The variable values to use for external variables.</param>
-        /// <param name="capScheme">The capitalization scheme to use.</param>
-        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
-        /// <returns>The result of processing the pattern.</returns>
-        public string Process(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
-        {
-            return Process(pattern, context, variables, new List<string>(), capScheme);
-        }
-
-        /// <summary>
-        /// Process a pattern.
-        /// </summary>
-        /// <param name="pattern">The pattern to process.</param>
-        /// <param name="context">The contexts to use to filter NameFragments.</param>
-        /// <param name="variables">The variable values to use for external variables.</param>
-        /// <param name="uniqueCheck">The list of names to check against for uniqueness.</param>
-        /// <param name="capScheme">The capitalization scheme to use.</param>
-        /// <throws>A PattternParseException if there is any error processing the pattern.</throws>
-        /// <returns>The result of processing the pattern.</returns>
-        public string Process(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, List<string> uniqueCheck, CapitalizationScheme capScheme)
+        public string Process(PatternProcessingParameters parameters)
         {
             if (!_initialized)
             {
                 throw new PatternParseException("NameParser is uninitialized. Call Initialize before Process");
             }
 
-            for (int i = 0; i < 1000; i++)
+            try
             {
-                var result = DoProcess(pattern, context, variables, capScheme);
 
-                if (!uniqueCheck.Contains(result))
+                for (int i = 0; i < 1000; i++)
                 {
-                    return result;
+                    var result = DoProcess(parameters);
+
+                    if (!parameters.UniqueCheck.Contains(result))
+                    {
+                        return result;
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                throw new PatternParseException("Error processing pattern", ex);
             }
 
             throw new PatternParseException("Unable to generate unique result!");
         }
 
-        private string DoProcess(string pattern, IEnumerable<string> context, Dictionary<string, string> variables, CapitalizationScheme capScheme)
+        private string DoProcess(PatternProcessingParameters parameters)
         {
-            _capScheme = capScheme;
-            _context = context;
-            _tag = "";
-            var outString = "";
-            _stateStack.AddFirst(UnmState.NO_STATE);
-            for(int i = 0; i < pattern.Length; i++)
+            var tokens = new LinkedList<PatternToken>(_lexer.Process(parameters.Pattern));
+
+            var resultBuilder = new StringBuilder();
+
+            var stateStack = new Stack<UnmState>();
+            stateStack.Push(UnmState.READ);
+
+            var location = tokens.First;
+
+            while (location != null)
             {
-                switch(_stateStack.First.Value)
+                var current = location.Value;
+
+                if (stateStack.Peek() == UnmState.READ)
                 {
-                    case UnmState.NO_STATE: outString += HandleNoState(pattern[i]); break;
-                    case UnmState.IN_TAG: outString += HandleInTag(pattern[i]); break;
-                    case UnmState.BRANCH_TAG: outString += HandleBranchTag(pattern[i]); break;
-                    case UnmState.CONTEXT_BRANCH_TAG: outString += HandleContextBranchTag(pattern[i]); break;
-                    case UnmState.TAKE_BRANCH: outString += HandleTakeBranch(pattern[i]); break;
-                    case UnmState.IGNORE_BRANCH: outString += HandleIgnoreBranch(pattern[i]); break;
-                    case UnmState.NESTED_IGNORE: outString += HandleNestedIgnore(pattern[i]); break;
-                    case UnmState.VARIABLE_TAG: outString += HandleVariableTag(pattern[i], variables); break;
-                    case UnmState.VARIABLE_BRANCH_TAG: outString += HandleVariableBranchTag(pattern[i], variables); break;
-                    default: throw new Exception("Unknown state: " + _stateStack.First.Value);
+                    switch (current.Type)
+                    {
+                        case TokenType.BRANCH_END:
+                            stateStack.Pop();
+                            break;
+
+                        case TokenType.BRANCH_START:
+                            stateStack.Push(UnmState.NESTED_IGNORE);
+                            break;
+
+                        case TokenType.CONTENT:
+                            resultBuilder.Append(current.Value);
+                            break;
+
+                        case TokenType.TAG_BRANCH_CHANCE:
+                            if (location.Next == null || location.Next.Value.Type != TokenType.BRANCH_START)
+                            {
+                                throw new PatternParseException(string.Format(
+                                    "Syntax error at position: {0}, { expected after conditional tag",
+                                    current.SourceIndex));
+                            }
+                            if (EvalulateCondition(parameters, current))
+                            {
+                                stateStack.Push(UnmState.READ);
+                            }
+                            else
+                            {
+                                stateStack.Push(UnmState.IGNORE);
+                            }
+                            location = location.Next;
+                            break;
+
+                        case TokenType.TAG_BRANCH_CONTEXT:
+                            goto case TokenType.TAG_BRANCH_CHANCE;
+
+                        case TokenType.TAG_BRANCH_VARIABLE:
+                            goto case TokenType.TAG_BRANCH_CHANCE;
+
+                        case TokenType.TAG_ELSE:
+                            if (stateStack.Count < 2)
+                            {
+                                throw new PatternParseException(
+                                    "Cannot use an else outside of a branch, location: "
+                                    + current.SourceIndex);
+                            }
+                            stateStack.Pop();
+                            stateStack.Push(UnmState.IGNORE);
+                            break;
+
+                        case TokenType.TAG_SUB_FRAGMENT:
+                            resultBuilder = PerformSubstitution(resultBuilder, parameters, current);
+                            break;
+
+                        case TokenType.TAG_SUB_VARIABLE:
+                            goto case TokenType.TAG_SUB_FRAGMENT;
+                    }
+                }
+                else if (stateStack.Peek() == UnmState.IGNORE)
+                {
+                    switch (current.Type)
+                    {
+                        case TokenType.BRANCH_END:
+                            stateStack.Pop();
+                            break;
+                        case TokenType.BRANCH_START:
+                            stateStack.Push(UnmState.NESTED_IGNORE);
+                            break;
+                        case TokenType.TAG_ELSE:
+                            stateStack.Pop();
+                            stateStack.Push(UnmState.READ);
+                            break;
+                    }
+                }
+                else if (stateStack.Peek() == UnmState.NESTED_IGNORE)
+                {
+                    switch(current.Type)
+                    {
+                        case TokenType.BRANCH_END:
+                            stateStack.Pop();
+                            break;
+                        case TokenType.BRANCH_START:
+                            stateStack.Push(UnmState.NESTED_IGNORE);
+                            break;
+                    }
+                }
+
+                if (stateStack.Count == 0)
+                {
+                    throw new PatternParseException("Extra closing bracket at position: " + current.SourceIndex);
+                }
+
+                location = location.Next;
+            }
+
+            if (stateStack.Count > 1)
+            {
+                throw new PatternParseException("Unclosed branch by end of pattern");
+            }
+
+            switch(parameters.CapitalizationScheme)
+            {
+                case CapitalizationScheme.BY_FRAGMENT: break; //Handled earlier
+                case CapitalizationScheme.BY_WORDS: resultBuilder = CaptializeByWords(resultBuilder); break;
+                case CapitalizationScheme.FIRST_LETTER: resultBuilder = CaptializeByFirstLetter(resultBuilder); break;
+                case CapitalizationScheme.NONE: break;
+                case CapitalizationScheme.BY_SENTENCE: resultBuilder = CapitalizeBySentence(resultBuilder); break;
+            }
+
+            return resultBuilder.ToString();
+        }
+
+        private bool EvalulateCondition(PatternProcessingParameters parameters, PatternToken token)
+        {
+            if (token.Type == TokenType.TAG_BRANCH_CHANCE)
+            {
+                var chance = Int32.Parse(TrimTag(1, token.Value));
+
+                return _random.Next(100) < chance;
+            }
+            else if (token.Type == TokenType.TAG_BRANCH_CONTEXT)
+            {
+                return parameters.Context.Contains(TrimTag(1, token.Value));
+            }
+            else if (token.Type == TokenType.TAG_BRANCH_VARIABLE)
+            {
+                return parameters.Variables.ContainsKey(TrimTag(1, token.Value));
+            }
+
+            throw new PatternParseException("Unhandled condition type: " + token.Type);
+        }
+
+        private StringBuilder PerformSubstitution(StringBuilder resultBuilder,
+            PatternProcessingParameters parameters, PatternToken token)
+        {
+            if (token.Type == TokenType.TAG_SUB_FRAGMENT)
+            {
+                var namelistName = TrimTag(0, token.Value);
+                var namelist = _namelistSource.GetNamelist(namelistName);
+
+                if (namelist == null)
+                {
+                    throw new PatternParseException(string.Format("No namelist matching {0} found.",
+                        namelistName));
+                }
+
+                var fragments = namelist.FragmentsForContext(parameters.Context);              
+
+                if (fragments.Count < 1)
+                {
+                    throw new PatternParseException(string.Format(
+                        "No fragments found for namelist: {0} and contexts: {1}",
+                        namelistName,
+                        string.Join(", ", parameters.Context.ToArray())));
+                }
+
+                var r = _random.Next(fragments.Count);
+
+                var fragment = fragments[r];
+
+                if (parameters.CapitalizationScheme == CapitalizationScheme.BY_FRAGMENT)
+                {
+                    fragment = char.ToUpper(fragment[0]) + fragment.Substring(1);
+                }
+
+                return resultBuilder.Append(fragment);
+            }
+            else if (token.Type == TokenType.TAG_SUB_VARIABLE)
+            {
+                var variableName = TrimTag(1, token.Value);
+
+                if (!parameters.Variables.ContainsKey(variableName))
+                {
+                    throw new PatternParseException("Variable expected but not provided: " + variableName);
+                }
+
+                return resultBuilder.Append(parameters.Variables[variableName]);
+            }
+
+            throw new PatternParseException("Unhandled substitution type: " + token.Type);
+        }
+
+        private string TrimTag(int extraLeadingCharacters, string rawValue)
+        {
+            return rawValue.Substring(
+                1 + extraLeadingCharacters,
+                rawValue.Length - 2 - extraLeadingCharacters);
+        }
+
+        private StringBuilder CaptializeByWords(StringBuilder resultBuilder)
+        {
+            var c = resultBuilder[0];
+
+            resultBuilder.Remove(0, 1);
+
+            resultBuilder.Insert(0, char.ToUpper(c));
+
+
+            for (int i = 1; i < resultBuilder.Length; i++)
+            {
+                if (char.IsWhiteSpace(resultBuilder[i - 1]))
+                {
+                    c = resultBuilder[i];
+
+                    resultBuilder.Remove(i, 1);
+
+                    resultBuilder.Insert(i, char.ToUpper(c));
                 }
             }
 
-            switch(_capScheme)
-            {
-                case CapitalizationScheme.BY_FRAGMENT: break;
-                case CapitalizationScheme.BY_WORDS: outString = CaptializeByWords(outString); break;
-                case CapitalizationScheme.FIRST_LETTER: outString = CaptializeByFirstLetter(outString); break;
-                case CapitalizationScheme.NONE: break;
-                case CapitalizationScheme.BY_SENTENCE: outString = CapitalizeBySentence(outString); break;
-            }
-
-            return outString;
+            return resultBuilder;
         }
 
-        private string CaptializeByFirstLetter(string text)
+        private StringBuilder CaptializeByFirstLetter(StringBuilder resultBuilder)
         {
-            var result = text[0].ToString().ToUpper();
+            var c = resultBuilder[0];
 
-            for(int i = 1; i < text.Length; i++)
-            {
-                result += text[i];
-            }
+            resultBuilder.Remove(0, 1);
 
-            return result;
+            resultBuilder.Insert(0, char.ToUpper(c));
+
+            return resultBuilder;
         }
 
-        private string CapitalizeBySentence(string text)
+        private StringBuilder CapitalizeBySentence(StringBuilder resultBuilder)
         {
-            var result = "";
-
-            var punctuation = new List<char> { ',', '.', '!', '?' };
-
-            var letters = new List<char> { 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p',
-                'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z' };
+            var passedPunctuation = true;
+            var passedWhitespace = true;
 
             var shouldCap = true;
 
-            for(int i = 0; i < text.Length; i++)
+            for (int i = 0; i < resultBuilder.Length; i++)
             {
-                var c = text[i];
+                var c = resultBuilder[i];
 
-                if(String.IsNullOrEmpty(c.ToString()))
+                if (char.IsPunctuation(c) || char.IsWhiteSpace(c))
                 {
-                    result += c;
+                    if(char.IsPunctuation(c))
+                    {
+                        passedPunctuation = true;
+                    }
+                    if(char.IsWhiteSpace(c))
+                    {
+                        passedWhitespace = true;
+                    }
                 }
-                else if(punctuation.Contains(c))
+                else
                 {
-                    result += c;
+                    passedWhitespace = false;
+                    passedPunctuation = false;
+                }
+
+                if (passedPunctuation && passedWhitespace)
+                {
                     shouldCap = true;
                 }
-                else
+
+                if (char.IsLetter(c))
                 {
-                    if(letters.Contains(c) && shouldCap)
+                    if (shouldCap)
                     {
-                        result += c.ToString().ToUpper();
+                        resultBuilder.Remove(i, 1);
+
+                        resultBuilder.Insert(i, char.ToUpper(c));
+
                         shouldCap = false;
                     }
-                    else
-                    {
-                        result += c;
-                    }
                 }
             }
 
-            return result;
+            return resultBuilder;
         }
 
-        private string CaptializeByWords(string text)
+        private enum UnmState
         {
-            var result = "";
-
-            result += text[0].ToString().ToUpper();
-
-            for(int i = 1; i < text.Length; i++)
-            {
-                if(String.IsNullOrEmpty(text[i - 1].ToString()) || text[i - 1] == ' ')
-                {
-                    result += text[i].ToString().ToUpper();
-                }
-                else
-                {
-                    result += text[i];
-                }
-            }
-
-            return result;
+            READ,
+            IGNORE,
+            NESTED_IGNORE
         }
-		
-		private string HandleNoState(char c)
-		{
-			switch(c)
-			{
-				case '<': _stateStack.AddFirst(UnmState.IN_TAG); _tag = ""; break;
-				case '>': goto case '|';
-				case '{': goto case '|';
-				case '}': goto case '|';
-				case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-				case '@': goto default;
-				case '$': goto default;
-                case '#': goto default;
-				default: return c + "";
-			}
-			return "";
-		}
-		
-		private string HandleInTag(char c)
-		{
-			switch(c)
-			{
-				case '<': goto case '|';
-				case '>': _stateStack.RemoveFirst(); return ProcessTag();
-				case '{': goto case '|';
-				case '}': goto case '|';
-				case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-                case '@': _stateStack.RemoveFirst(); _stateStack.AddFirst(UnmState.BRANCH_TAG); break;
-                case '$': _stateStack.RemoveFirst(); _stateStack.AddFirst(UnmState.CONTEXT_BRANCH_TAG); break;
-                case '#': _stateStack.RemoveFirst(); _stateStack.AddFirst(UnmState.VARIABLE_TAG); break;
-				default: _tag += c; break;
-			}
-			return "";
-		}
-		
-		private string HandleBranchTag(char c)
-		{
-			switch(c)
-			{
-				case '<': goto case '|';
-				case '>': goto case '|';
-				case '{': _stateStack.RemoveFirst(); ProcessBranchTag(); break;
-				case '}': goto case '|';
-				case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-				case '@': goto case '|';
-				case '$': goto case '|';
-                case '#': if(_tag.Length == 0)
-                    {
-                        _stateStack.RemoveFirst();
-                        _stateStack.AddFirst(UnmState.VARIABLE_BRANCH_TAG)
-                        ; break;
-                    }
-                    else
-                    {
-                        goto case '|';
-                    }
-				default: _tag += c; break;
-			}
-			return "";
-		}
-		
-		private string HandleContextBranchTag(char c)
-		{
-			switch(c)
-			{
-				case '<': goto case '|';
-				case '>': goto case '|';
-				case '{': _stateStack.RemoveFirst(); ProcessContextBranchTag(); break;
-				case '}': goto case '|';
-				case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-				case '@': goto case '|';
-				case '$': goto case '|';
-                case '#': goto case '|';
-				default: _tag += c; break;
-			}
-			return "";
-		}
-		
-		private string HandleTakeBranch(char c)
-		{
-			switch(c)
-			{
-				case '<': _stateStack.AddFirst(UnmState.IN_TAG); _tag = ""; break;
-				case '>': goto case '{';
-				case '{': throw new PatternParseException("Unexpected character in pattern: " + c);
-				case '}': _stateStack.RemoveFirst(); break;
-				case '|': _stateStack.RemoveFirst(); _stateStack.AddFirst(UnmState.IGNORE_BRANCH); break;
-				case '@': goto default;
-				case '$': goto default;
-                case '#': goto default;
-				default: return c + "";
-			}
-			return "";
-		}
-		
-		private string HandleIgnoreBranch(char c)
-		{
-			switch(c)
-			{
-				case '<': goto default;
-				case '>': goto default;
-				case '{': _stateStack.AddFirst(UnmState.NESTED_IGNORE); break;
-				case '}': _stateStack.RemoveFirst(); break;
-				case '|': _stateStack.RemoveFirst(); _stateStack.AddFirst(UnmState.TAKE_BRANCH); break;
-				case '@': goto default;
-				case '$': goto default;
-                case '#': goto default;
-				default: break;
-			}
-			return "";
-		}
-		
-		private string HandleNestedIgnore(char c)
-		{
-			switch(c)
-			{
-				case '<': goto default;
-				case '>': goto default;
-				case '{': _stateStack.AddFirst(UnmState.NESTED_IGNORE); break;
-				case '}': _stateStack.RemoveFirst(); break;
-				case '|': goto default;
-				case '@': goto default;
-				case '$': goto default;
-                case '#': goto default;
-				default: break;
-			}
-			return "";
-		}
-
-        private string HandleVariableTag(char c, Dictionary<string, string> variables)
-        {
-            switch(c)
-            {
-                case '<': goto case '|';
-                case '>': _stateStack.RemoveFirst(); return ProcessVariableTag(variables);
-                case '{': goto case '|';
-                case '}': goto case '|';
-                case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-                case '@': goto case '|';
-                case '$': goto case '|';
-                case '#': goto case '|';
-                default: _tag += c; break;
-            }
-            return "";
-        }
-
-        private string HandleVariableBranchTag(char c, Dictionary<string, string> variables)
-        {
-            switch(c)
-            {
-                case '<': goto case '|';
-                case '>': goto case '|';
-                case '{': _stateStack.RemoveFirst(); ProcessVariableBranchTag(variables); break;
-                case '}': goto case '|';
-                case '|': throw new PatternParseException("Unexpected character in pattern: " + c);
-                case '@': goto case '|';
-                case '$': goto case '|';
-                case '#': goto case '|';
-                default: _tag += c; break;
-            }
-            return "";
-        }
-
-		private string ProcessTag()
-		{
-			var list = _namelistSource.GetNamelist(_tag);
-			
-			var fragments = list.FragmentsForContext(_context);
-			
-			if(fragments.Count == 0)
-			{
-                var cstr = "";
-
-                foreach(var c in _context)
-                {
-                    cstr += c + ", ";
-                }
-
-				throw new PatternParseException("No fragments found in list: " + _tag
-					+ " for context: "  + cstr);
-			}
-			
-			var fragment = fragments[_random.Next(fragments.Count)];
-
-            if(_capScheme == CapitalizationScheme.BY_FRAGMENT)
-            {
-                var outFragment = "";
-
-                for(int i = 0; i < fragment.Length; i++)
-                {
-                    if(i == 0)
-                    {
-                        outFragment += fragment[i].ToString().ToUpper();
-                    }
-                    else
-                    {
-                        outFragment += fragment[i];
-                    }
-                }
-
-                fragment = outFragment;
-            }
-
-            return fragment;
-		}
-
-        private void ProcessBranchTag()
-		{
-			int chance = Int32.Parse(_tag);
-			
-			if(chance >= _random.Next(100))
-			{
-				_stateStack.AddFirst(UnmState.TAKE_BRANCH);
-			}
-			else
-			{
-				_stateStack.AddFirst(UnmState.IGNORE_BRANCH);
-			}
-		}
-		
-		private void ProcessContextBranchTag()
-		{
-			if(_context.Contains(_tag))
-			{
-				_stateStack.AddFirst(UnmState.TAKE_BRANCH);
-			}
-			else
-			{
-				_stateStack.AddFirst(UnmState.IGNORE_BRANCH);
-			}
-		}
-
-        private string ProcessVariableTag(Dictionary<string, string> variables)
-        {
-            if(variables.ContainsKey(_tag))
-            {
-                return variables[_tag];
-            }
-            else
-            {
-                throw new PatternParseException("No value specified for variable: " + _tag);
-            }
-        }
-
-        private void ProcessVariableBranchTag(Dictionary<string, string> variables)
-        {
-            if(variables.ContainsKey(_tag))
-            {
-                _stateStack.AddFirst(UnmState.TAKE_BRANCH);
-            }
-            else
-            {
-                _stateStack.AddFirst(UnmState.IGNORE_BRANCH);
-            }
-        }
-		
-		private enum UnmState
-		{
-			NO_STATE, IN_TAG, BRANCH_TAG, CONTEXT_BRANCH_TAG, TAKE_BRANCH, IGNORE_BRANCH, NESTED_IGNORE, VARIABLE_TAG, VARIABLE_BRANCH_TAG
-		}
 	}
 }

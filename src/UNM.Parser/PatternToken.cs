@@ -1,4 +1,6 @@
-﻿namespace UNM.Parser
+﻿using System.Collections.Generic;
+
+namespace UNM.Parser
 {
     /// <summary>
     /// A single token from a UNM pattern.
@@ -19,7 +21,6 @@
         /// The index in the source pattern where this token begins.
         /// </summary>
         public int SourceIndex { get; set; }
-
 
         /// <summary>
         /// Construct a new PatternToken.

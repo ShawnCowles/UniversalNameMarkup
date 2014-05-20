@@ -12,11 +12,13 @@ namespace UNM.Parser
         private Fixture _fixture = new Fixture();
 
         [Test]
-        public void Initialize_initializes_the_namelist_source()
+        public void Initialize_initializes_the_namelist_source_and_pattern_lexer()
         {
             var mockNamelistSource = new Mock<INamelistSource>();
+
+            var mockLexer = new Mock<IPatternLexer>();
             
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var parser = new NameParser(mockNamelistSource.Object, mockLexer.Object, _fixture.Create<int>());
 
             parser.Initialize();
 
@@ -24,11 +26,13 @@ namespace UNM.Parser
         }
 
         [Test]
-        public void Initialize_only_initializes_the_namelist_source_once()
+        public void Initialize_only_initializes_the_namelist_source_and_pattern_lexer_once()
         {
             var mockNamelistSource = new Mock<INamelistSource>();
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var mockLexer = new Mock<IPatternLexer>();
+
+            var parser = new NameParser(mockNamelistSource.Object, mockLexer.Object, _fixture.Create<int>());
 
             parser.Initialize();
 
@@ -40,11 +44,31 @@ namespace UNM.Parser
         {
             var mockNamelistSource = new Mock<INamelistSource>();
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var mockLexer = new Mock<IPatternLexer>();
+
+            var parser = new NameParser(mockNamelistSource.Object, mockLexer.Object, _fixture.Create<int>());
 
             Assert.Throws<PatternParseException>(
-                () => parser.Process(_fixture.Create<string>(),
-                    _fixture.Create<CapitalizationScheme>()));
+                () => parser.Process(_fixture.Create<PatternProcessingParameters>()));
+        }
+
+        [Test]
+        public void Process_rethrows_exceptions_thrown_by_provided_lexer()
+        {
+            var mockLexer = new Mock<IPatternLexer>(); ;
+
+            var mockNamelistSource = new Mock<INamelistSource>();
+
+            mockLexer
+                .Setup(x => x.Process(It.IsAny<string>()))
+                .Throws(new PatternParseException(""));
+            
+            var parser = new NameParser(mockNamelistSource.Object, mockLexer.Object, _fixture.Create<int>());
+
+            parser.Initialize();
+
+            Assert.Throws<PatternParseException>(
+                () => parser.Process(_fixture.Create<PatternProcessingParameters>()));
         }
 
         [Test]
@@ -61,7 +85,8 @@ namespace UNM.Parser
             secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
 
             var expectedResult = firstReplacement + secondReplacement;
-            
+
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
 
             var mockNamelistSource = new Mock<INamelistSource>();
             mockNamelistSource
@@ -71,11 +96,13 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern);
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -84,7 +111,7 @@ namespace UNM.Parser
         [TestCase(false)]
         public void Process_correctly_handles_branching_by_context(bool takeBranch)
         {
-            var testPattern = "front<$branch{middle}end";
+            var testPattern = "front<@branch>{middle}end";
             var expectedTakeBranch = "frontmiddleend";
             var expectedIgnoreBranch = "frontend";
 
@@ -97,11 +124,18 @@ namespace UNM.Parser
                 context.Add("branch");
             }
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, context, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Context = context
+            };
+
+            var result = parser.Process(parameters);
 
             if (takeBranch)
             {
@@ -116,17 +150,21 @@ namespace UNM.Parser
         [Test]
         public void Process_correctly_handles_branching_by_chance()
         {
-            var testPattern = "front<@50{middle}end";
+            var testPattern = "front<%50>{middle}end";
             var expectedTakeBranch = "frontmiddleend";
             var expectedIgnoreBranch = "frontend";
 
             var mockNamelistSource = new Mock<INamelistSource>();
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern);
+
+            var result = parser.Process(parameters);
 
             //TODO try asserting that each is taken roughly half the time out of many tries
 
@@ -137,7 +175,7 @@ namespace UNM.Parser
         [TestCase(false)]
         public void Process_correctly_handles_branching_by_variable(bool takeBranch)
         {
-            var testPattern = "front<@#var1{middle}end";
+            var testPattern = "front<$var1>{middle}end";
             var expectedTakeBranch = "frontmiddleend";
             var expectedIgnoreBranch = "frontend";
 
@@ -150,12 +188,18 @@ namespace UNM.Parser
                 variables.Add("var1", _fixture.Create<string>());
             }
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, Enumerable.Empty<string>(), variables,
-                CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Variables = variables
+            };
+
+            var result = parser.Process(parameters);
 
             if (takeBranch)
             {
@@ -173,7 +217,7 @@ namespace UNM.Parser
         [TestCase(true, true)]
         public void Process_correctly_handles_nested_branching(bool takeOuterBranch, bool takeInnerBranch)
         {
-            var testPattern = "front<$outer{middle<$inner{deep}}end";
+            var testPattern = "front<@outer>{middle<@inner>{deep}}end";
             var expectedTakeJustOutsideBranch = "frontmiddleend";
             var expectedTakeAllBranch = "frontmiddledeepend";
             var expectedIgnoreBranch = "frontend";
@@ -192,11 +236,18 @@ namespace UNM.Parser
                 context.Add("inner");
             }
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, context, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Context = context
+            };
+
+            var result = parser.Process(parameters);
 
             if (takeOuterBranch)
             {
@@ -227,7 +278,9 @@ namespace UNM.Parser
 
             var mockNamelistSource = new Mock<INamelistSource>();
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
@@ -235,8 +288,12 @@ namespace UNM.Parser
             variables.Add("var1", variable1Value);
             variables.Add("var2", variable2Value);
 
-            var result = parser.Process(testPattern, Enumerable.Empty<string>(), variables,
-                CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Variables = variables
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -248,14 +305,18 @@ namespace UNM.Parser
 
             var mockNamelistSource = new Mock<INamelistSource>();
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var variables = new Dictionary<string, string>();
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Variables = new Dictionary<string, string>()
+            };
 
-            Assert.Throws<PatternParseException>(() => parser.Process(
-                testPattern, Enumerable.Empty<string>(), variables, CapitalizationScheme.NONE));
+            Assert.Throws<PatternParseException>(() => parser.Process(parameters));
         }
 
 
@@ -295,11 +356,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("replaceme"))
                 .Returns(namelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Context = context
+            };
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, context, CapitalizationScheme.NONE);
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -308,7 +376,7 @@ namespace UNM.Parser
         [TestCase(false)]
         public void Process_correctly_handles_branching_with_or(bool takeBranch)
         {
-            var testPattern = "front<$branch{middle|else}end";
+            var testPattern = "front<@branch>{middle|else}end";
             var expectedTakeBranch = "frontmiddleend";
             var expectedIgnoreBranch = "frontelseend";
 
@@ -321,11 +389,18 @@ namespace UNM.Parser
                 context.Add("branch");
             }
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, context, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Context = context
+            };
+
+            var result = parser.Process(parameters);
 
             if (takeBranch)
             {
@@ -343,7 +418,7 @@ namespace UNM.Parser
         [TestCase(true, true)]
         public void Process_correctly_handles_branching_with_nested_or(bool takeInner, bool takeOuter)
         {
-            var testPattern = "<$outer{<$inner{a|b}|<$inner{c|d}}";
+            var testPattern = "<@outer>{<@inner>{a|b}|<@inner>{c|d}}";
             var expectedNoNo = "d";
             var expectedNoYes = "c";
             var expectedYesNo = "b";
@@ -362,11 +437,18 @@ namespace UNM.Parser
                 context.Add("outer");
             }
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, context, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                Context = context
+            };
+
+            var result = parser.Process(parameters);
 
             if (takeOuter)
             {
@@ -412,29 +494,33 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("replaceme"))
                 .Returns(namelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
             var results = new List<string>();
 
+            PatternProcessingParameters parameters;
+
             for (int i = 0; i < replacements.Count(); i++)
             {
-                results.Add(parser.Process(
-                    testPattern,
-                    Enumerable.Empty<string>(),
-                    new Dictionary<string, string>(),
-                    results,
-                    CapitalizationScheme.NONE));
+                parameters = new PatternProcessingParameters(testPattern)
+                {
+                    UniqueCheck = results
+                };
+
+                results.Add(parser.Process(parameters));
             }
 
+            parameters = new PatternProcessingParameters(testPattern)
+            {
+                UniqueCheck = results
+            };
+
             Assert.Throws<PatternParseException>(
-                () => parser.Process(
-                    testPattern,
-                    Enumerable.Empty<string>(),
-                    new Dictionary<string, string>(),
-                    results,
-                    CapitalizationScheme.NONE));
+                () => parser.Process(parameters));
 
             foreach (var replacement in replacements)
             {
@@ -466,11 +552,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.BY_FRAGMENT);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.BY_FRAGMENT
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -499,11 +592,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.BY_WORDS);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.BY_WORDS
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -532,11 +632,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.FIRST_LETTER);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.FIRST_LETTER
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -565,11 +672,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.NONE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.NONE
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
@@ -598,11 +712,18 @@ namespace UNM.Parser
                 .Setup(x => x.GetNamelist("second_part"))
                 .Returns(secondNamelist);
 
-            var parser = new NameParser(mockNamelistSource.Object, _fixture.Create<int>());
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(mockNamelistSource.Object, lexer, _fixture.Create<int>());
 
             parser.Initialize();
 
-            var result = parser.Process(testPattern, CapitalizationScheme.BY_SENTENCE);
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.BY_SENTENCE
+            };
+
+            var result = parser.Process(parameters);
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
