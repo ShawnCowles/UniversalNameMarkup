@@ -33,6 +33,16 @@ namespace UNM.Parser
 		}
 
         /// <summary>
+        /// Construct a new NameParser using the default <see cref="IPatternLexer"/>.
+        /// </summary>
+        /// <param name="namelistSource">The source for namelists to use.</param>
+        /// <param name="seed">The random seed to use for NameFragment selection.</param>
+        public NameParser(INamelistSource namelistSource, int seed)
+            : this(namelistSource, new PatternLexer(new SimpleLexer.Lexer()), seed)
+        {
+        }
+
+        /// <summary>
         /// Initialize the NameParser.
         /// </summary>
         public void Initialize()
