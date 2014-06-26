@@ -41,7 +41,12 @@ namespace UNM.Parser
 				
 				var listName = tokens[0];
 
-                var list = new Namelist(listName);
+                if (!_namelists.ContainsKey(listName))
+                {
+                    _namelists.Add(listName, new Namelist(listName));
+                }
+
+                var list = _namelists[listName];
 				
 				var fragment = tokens[1];
 
@@ -58,8 +63,6 @@ namespace UNM.Parser
 
                     list.AddFragment(new NameFragment(fragment, contexts));
                 }
-
-                _namelists.Add(listName, list);
 				
 				line = reader.ReadLine();
 			}
