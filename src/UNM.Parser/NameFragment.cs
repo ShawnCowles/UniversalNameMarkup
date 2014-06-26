@@ -36,7 +36,7 @@ namespace UNM.Parser
 		{
             if (!_contexts.Any())
             {
-                return !contextsToMatch.Any();
+                return true;
             }
 
             return contextsToMatch.Intersect(_contexts).Any();

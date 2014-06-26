@@ -53,6 +53,7 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="NameFragmentTest.cs" />
     <Compile Include="PatternLexerTest.cs" />
     <Compile Include="SimpleLexer\LexerTest.cs" />
     <Compile Include="NameParserTest.cs" />
