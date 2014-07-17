@@ -48,6 +48,11 @@
         /// <summary>
         /// End of a branch group.
         /// </summary>
-        BRANCH_END
+        BRANCH_END,
+
+        /// <summary>
+        /// Tag defining a pattern that should be looked up, processed, and substituted in.
+        /// </summary>
+        SUB_PATTERN
     }
 }

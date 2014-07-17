@@ -89,14 +89,14 @@ namespace UNM.Parser
         public void Basic_definition_test()
         {
             var testPattern = "<sub_fragment><#sub_variable><%12><@branch-context>"
-                + "<$branch_Variable>|{this is some$contentwith!$oDDcharacterz}";
+                + "<$branch_Variable>|{this is some$contentwith!$oDDcharacterz}<^sub_pattern>";
             
             var patternLexer = new PatternLexer(new Lexer());
             patternLexer.Initialize();
 
             var results = patternLexer.Process(testPattern).ToArray();
 
-            Assert.That(results.Count(), Is.EqualTo(9));
+            Assert.That(results.Count(), Is.EqualTo(10));
 
             Assert.That(results[0].Type, Is.EqualTo(TokenType.TAG_SUB_FRAGMENT));
             Assert.That(results[0].Value, Is.EqualTo("<sub_fragment>"));
@@ -116,6 +116,8 @@ namespace UNM.Parser
             Assert.That(results[7].Value, Is.EqualTo("this is some$contentwith!$oDDcharacterz"));
             Assert.That(results[8].Type, Is.EqualTo(TokenType.BRANCH_END));
             Assert.That(results[8].Value, Is.EqualTo("}"));
+            Assert.That(results[9].Type, Is.EqualTo(TokenType.SUB_PATTERN));
+            Assert.That(results[9].Value, Is.EqualTo("<^sub_pattern>"));
         }
 
         [Test]
