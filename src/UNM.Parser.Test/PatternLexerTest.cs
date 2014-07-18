@@ -116,7 +116,7 @@ namespace UNM.Parser
             Assert.That(results[7].Value, Is.EqualTo("this is some$contentwith!$oDDcharacterz"));
             Assert.That(results[8].Type, Is.EqualTo(TokenType.BRANCH_END));
             Assert.That(results[8].Value, Is.EqualTo("}"));
-            Assert.That(results[9].Type, Is.EqualTo(TokenType.SUB_PATTERN));
+            Assert.That(results[9].Type, Is.EqualTo(TokenType.TAG_SUB_PATTERN));
             Assert.That(results[9].Value, Is.EqualTo("<^sub_pattern>"));
         }
 

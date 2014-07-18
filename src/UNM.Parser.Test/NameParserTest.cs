@@ -727,5 +727,47 @@ namespace UNM.Parser
 
             Assert.That(result, Is.EqualTo(expectedResult));
         }
+
+        [Test]
+        public void Subpatterns_are_processed_before_being_substituted()
+        {
+            var subPattern = "<first> and then the <second>";
+
+            var pattern = "<^sub_pattern> and then some more <first>";
+
+            var expected = "first_sub and then the second_sub and then some more first_sub";
+
+            var subPatternNamelist = new Namelist("sub_pattern");
+            subPatternNamelist.AddFragment(new NameFragment(subPattern, Enumerable.Empty<string>()));
+
+            var firstNamelist = new Namelist("first");
+            firstNamelist.AddFragment(new NameFragment("first_sub", Enumerable.Empty<string>()));
+
+            var secondNamelist = new Namelist("second");
+            secondNamelist.AddFragment(new NameFragment("second_sub", Enumerable.Empty<string>()));
+
+            var mockNamelistSource = new Mock<INamelistSource>();
+            mockNamelistSource
+                .Setup(x => x.GetNamelist("sub_pattern"))
+                .Returns(subPatternNamelist);
+
+            mockNamelistSource
+                .Setup(x => x.GetNamelist("first"))
+                .Returns(firstNamelist);
+
+            mockNamelistSource
+                .Setup(x => x.GetNamelist("second"))
+                .Returns(secondNamelist);
+
+            var parser = new NameParser(mockNamelistSource.Object, 0);
+
+            parser.Initialize();
+
+            var parameters = new PatternProcessingParameters(pattern);
+
+            var result = parser.Process(parameters);
+
+            Assert.That(result, Is.EqualTo(expected));
+        }
     }
 }

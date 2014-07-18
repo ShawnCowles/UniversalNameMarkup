@@ -38,7 +38,7 @@ namespace UNM.Parser
                 new Regex(@"<#[0-9a-zA-Z_-]+>")));
 
             _lexer.AddDefinition(new TokenDefinition(
-                TokenType.SUB_PATTERN.ToString(),
+                TokenType.TAG_SUB_PATTERN.ToString(),
                 new Regex(@"<\^[0-9a-zA-Z_-]+>")));
 
             _lexer.AddDefinition(new TokenDefinition(

@@ -53,6 +53,6 @@
         /// <summary>
         /// Tag defining a pattern that should be looked up, processed, and substituted in.
         /// </summary>
-        SUB_PATTERN
+        TAG_SUB_PATTERN
     }
 }
