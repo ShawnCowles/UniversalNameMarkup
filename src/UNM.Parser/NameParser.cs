@@ -161,6 +161,10 @@ namespace UNM.Parser
 
                         case TokenType.TAG_SUB_VARIABLE:
                             goto case TokenType.TAG_SUB_FRAGMENT;
+
+                        case TokenType.TAG_SUB_PATTERN:
+                            resultBuilder = ProcessSubPattern(resultBuilder, parameters, current);
+                            break;
                     }
                 }
                 else if (stateStack.Peek() == UnmState.IGNORE)
@@ -285,6 +289,45 @@ namespace UNM.Parser
             }
 
             throw new PatternParseException("Unhandled substitution type: " + token.Type);
+        }
+
+        private StringBuilder ProcessSubPattern(StringBuilder resultBuilder,
+            PatternProcessingParameters parameters, PatternToken token)
+        {
+            var namelistName = TrimTag(1, token.Value);
+            var namelist = _namelistSource.GetNamelist(namelistName);
+
+            if(namelist == null)
+            {
+                throw new PatternParseException(string.Format("No namelist matching {0} found.",
+                    namelistName));
+            }
+
+            var fragments = namelist.FragmentsForContext(parameters.Context);
+
+            if(fragments.Count < 1)
+            {
+                throw new PatternParseException(string.Format(
+                    "No fragments found for namelist: {0} and contexts: {1}",
+                    namelistName,
+                    string.Join(", ", parameters.Context.ToArray())));
+            }
+
+            var r = _random.Next(fragments.Count);
+
+            var fragment = fragments[r];
+
+            var subParams = new PatternProcessingParameters(fragment)
+            {
+                CapitalizationScheme = parameters.CapitalizationScheme,
+                Context = parameters.Context,
+                UniqueCheck = parameters.UniqueCheck,
+                Variables = parameters.Variables
+            };
+
+            var result = Process(subParams);
+
+            return resultBuilder.Append(result);
         }
 
         private string TrimTag(int extraLeadingCharacters, string rawValue)
