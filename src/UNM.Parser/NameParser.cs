@@ -348,7 +348,7 @@ namespace UNM.Parser
 
             for (int i = 1; i < resultBuilder.Length; i++)
             {
-                if (char.IsWhiteSpace(resultBuilder[i - 1]))
+                if (char.IsWhiteSpace(resultBuilder[i - 1]) || resultBuilder[i - 1] == '-')
                 {
                     c = resultBuilder[i];
 
@@ -383,9 +383,9 @@ namespace UNM.Parser
             {
                 var c = resultBuilder[i];
 
-                if (char.IsPunctuation(c) || char.IsWhiteSpace(c))
+                if (c == '.'  || char.IsWhiteSpace(c))
                 {
-                    if(char.IsPunctuation(c))
+                    if (c == '.')
                     {
                         passedPunctuation = true;
                     }

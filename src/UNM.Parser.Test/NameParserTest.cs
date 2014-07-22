@@ -769,5 +769,51 @@ namespace UNM.Parser
 
             Assert.That(result, Is.EqualTo(expected));
         }
+
+        [Test]
+        public void Process_honors_capitalization_by_sentence_with_hyphens_and_commas()
+        {
+            var testPattern = "this thing, and that thing. And yet-more, and more.";
+
+            var expectedResult = "This thing, and that thing. And yet-more, and more.";
+
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(Mock.Of<INamelistSource>(), lexer, _fixture.Create<int>());
+
+            parser.Initialize();
+
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.BY_SENTENCE
+            };
+
+            var result = parser.Process(parameters);
+
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
+
+        [Test]
+        public void Process_honors_capitalization_by_words_with_hyphens()
+        {
+            var testPattern = "for-example and MoRe";
+
+            var expectedResult = "For-Example And MoRe";
+
+            var lexer = new PatternLexer(new SimpleLexer.Lexer());
+
+            var parser = new NameParser(Mock.Of<INamelistSource>(), lexer, _fixture.Create<int>());
+
+            parser.Initialize();
+
+            var parameters = new PatternProcessingParameters(testPattern)
+            {
+                CapitalizationScheme = CapitalizationScheme.BY_WORDS
+            };
+
+            var result = parser.Process(parameters);
+
+            Assert.That(result, Is.EqualTo(expectedResult));
+        }
     }
 }
