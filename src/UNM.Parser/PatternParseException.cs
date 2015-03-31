@@ -5,16 +5,16 @@ namespace UNM.Parser
     /// <summary>
     /// An exception indicating that a UNM pattern has failed to parse properly.
     /// </summary>
-	public class PatternParseException : Exception
-	{
+    public class PatternParseException : Exception
+    {
         /// <summary>
         /// Construct a new PatternParseException.
         /// </summary>
         /// <param name="message">Message explaining the exception.</param>
-		public PatternParseException (string message)
-			:base(message)
-		{
-		}
+        public PatternParseException (string message)
+            :base(message)
+        {
+        }
 
         /// <summary>
         /// Construct a new PatternParseException.
@@ -25,6 +25,6 @@ namespace UNM.Parser
             : base(message, innerException)
         {
         }
-	}
+    }
 }
 

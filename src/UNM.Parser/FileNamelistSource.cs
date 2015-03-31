@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using CsvHelper;
 
 namespace UNM.Parser
 {
@@ -28,44 +29,36 @@ namespace UNM.Parser
         /// </summary>
         public void Initialize()
         {
-			var reader = new StreamReader(_sourceFile);
-
-            reader.ReadLine(); // Ignore first line of headers
-
-			var line = reader.ReadLine();
-			
-			while(line != null)
-			{
-		
-                var tokens = line.Split(new char[] {','});
-				
-				var listName = tokens[0];
-
-                if (!_namelists.ContainsKey(listName))
+            using(var reader = new CsvReader(new StreamReader(_sourceFile)))
+            {
+                while (reader.Read())
                 {
-                    _namelists.Add(listName, new Namelist(listName));
-                }
+                    var listName = reader.GetField(0);
 
-                var list = _namelists[listName];
-				
-				var fragment = tokens[1];
-
-                if (fragment.Length > 1)
-                {
-                    var contexts = new List<string>();
-                    for (int i = 2; i < tokens.Length; i++)
+                    if (!_namelists.ContainsKey(listName))
                     {
-                        if (tokens[i].Length > 0)
-                        {
-                            contexts.Add(tokens[i]);
-                        }
+                        _namelists.Add(listName, new Namelist(listName));
                     }
 
-                    list.AddFragment(new NameFragment(fragment, contexts));
+                    var list = _namelists[listName];
+
+                    var fragment = reader.GetField(1);
+
+                    if (fragment.Length > 1)
+                    {
+                        var contexts = new List<string>();
+                        for (int i = 2; i < reader.FieldHeaders.Length; i++)
+                        {
+                            if (reader.GetField(i).Length > 0)
+                            {
+                                contexts.Add(reader.GetField(i));
+                            }
+                        }
+
+                        list.AddFragment(new NameFragment(fragment, contexts));
+                    }
                 }
-				
-				line = reader.ReadLine();
-			}
+            }
         }
 
         /// <summary>

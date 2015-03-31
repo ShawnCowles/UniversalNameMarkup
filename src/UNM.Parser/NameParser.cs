@@ -8,9 +8,9 @@ namespace UNM.Parser
     /// <summary>
     /// The NameParser, processes patterns to produce names.
     /// </summary>
-	public class NameParser
-	{
-		private Random _random;
+    public class NameParser
+    {
+        private Random _random;
         private bool _initialized;
         private INamelistSource _namelistSource;
         private IPatternLexer _lexer;
@@ -21,16 +21,16 @@ namespace UNM.Parser
         /// <param name="namelistSource">The source for namelists to use.</param>
         /// <param name="seed">The random seed to use for NameFragment selection.</param>
         /// <param name="lexer">The <see cref="IPatternLexer"/> to use to process patterns.</param>
-		public NameParser (INamelistSource namelistSource, IPatternLexer lexer, int seed)
-		{
+        public NameParser (INamelistSource namelistSource, IPatternLexer lexer, int seed)
+        {
             _namelistSource = namelistSource;
 
             _lexer = lexer;
 
-			_random = new Random(seed);
+            _random = new Random(seed);
 
             _initialized = false;
-		}
+        }
 
         /// <summary>
         /// Construct a new NameParser using the default <see cref="IPatternLexer"/>.
@@ -427,5 +427,5 @@ namespace UNM.Parser
             IGNORE,
             NESTED_IGNORE
         }
-	}
+    }
 }
