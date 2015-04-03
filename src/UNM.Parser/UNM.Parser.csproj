@@ -44,7 +44,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapitalizationScheme.cs" />
+    <Compile Include="ContextExpressions\IContextExpression.cs" />
     <Compile Include="FileNamelistSource.cs" />
+    <Compile Include="IContextExpressionParser.cs" />
     <Compile Include="INamelistSource.cs" />
     <Compile Include="IPatternLexer.cs" />
     <Compile Include="PatternLexer.cs" />
@@ -68,5 +70,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

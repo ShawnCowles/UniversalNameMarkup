@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UNM.Parser.ContextExpressions;
 
 namespace UNM.Parser
 {
@@ -14,17 +15,17 @@ namespace UNM.Parser
         /// </summary>
         public string Fragment { get; private set; }
 
-        private IEnumerable<string> _contexts;
+        private IContextExpression _contextExpression;
         
         /// <summary>
-        /// Contstruct a new NameFragment.
+        /// Constructs a new NameFragment.
         /// </summary>
         /// <param name="fragment">The value of the fragment.</param>
-        /// <param name="contexts">The contexts applicable to the fragment.</param>
-        public NameFragment (string fragment, IEnumerable<string> contexts)
+        /// <param name="contextExpression">The context expression for this fragment.</param>
+        public NameFragment (string fragment, IContextExpression contextExpression)
         {
             Fragment = fragment;
-            _contexts = contexts;
+            _contextExpression = contextExpression;
         }
         
         /// <summary>
@@ -34,12 +35,7 @@ namespace UNM.Parser
         /// <returns>True if the fragment matches any context out of <paramref name="contextsToMatch"/></returns>
         public bool MatchesContexts(IEnumerable<string> contextsToMatch)
         {
-            if (!_contexts.Any())
-            {
-                return true;
-            }
-
-            return contextsToMatch.Intersect(_contexts).Any();
+            return _contextExpression.Matches(contextsToMatch);
         }
     }
 }
