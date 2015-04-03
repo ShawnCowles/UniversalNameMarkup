@@ -8,7 +8,7 @@ namespace UNM.Parser.ContextExpressions
     /// </summary>
     public class MatchExpression : IContextExpression
     {
-        private string _match;
+        internal string Match { get; private set; }
 
         /// <summary>
         /// Construct a new MatchExpression.
@@ -16,7 +16,7 @@ namespace UNM.Parser.ContextExpressions
         /// <param name="match">The string to search for.</param>
         public MatchExpression(string match)
         {
-            _match = match;
+            Match = match;
         }
 
         /// <summary>
@@ -26,7 +26,7 @@ namespace UNM.Parser.ContextExpressions
         /// <returns>True if <paramref name="context"/> matches this expression.</returns>
         public bool Matches(IEnumerable<string> context)
         {
-            return context.Contains(_match);
+            return context.Contains(Match);
         }
     }
 }

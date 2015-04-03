@@ -6,17 +6,13 @@ namespace UNM.Parser.ContextExpressions
     /// <summary>
     /// A context expression that returns the logical OR of one or more sub expressions.
     /// </summary>
-    public class OrExpression : IContextExpression
+    public class OrExpression : NodeExpression
     {
-        private IEnumerable<IContextExpression> _subExpressions;
-
         /// <summary>
         /// Construct a new OrExpression.
         /// </summary>
-        /// <param name="subExpression">The sub expressions to AND together.</param>
-        public OrExpression(IEnumerable<IContextExpression> subExpression)
+        public OrExpression()
         {
-            _subExpressions = subExpression;
         }
 
         /// <summary>
@@ -24,9 +20,9 @@ namespace UNM.Parser.ContextExpressions
         /// </summary>
         /// <param name="context">The context to used.</param>
         /// <returns>True if <paramref name="context"/> matches this expression.</returns>
-        public bool Matches(IEnumerable<string> context)
+        public override bool Matches(IEnumerable<string> context)
         {
-            return _subExpressions.Any(e => e.Matches(context));
+            return LeftChild.Matches(context) || RightChild.Matches(context);
         }
     }
 }

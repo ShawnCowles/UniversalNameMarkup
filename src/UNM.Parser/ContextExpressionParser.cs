@@ -31,27 +31,31 @@ namespace UNM.Parser
         {
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_AND.ToString(),
-                new Regex("&&")));
+                new Regex(@"&&")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_OR.ToString(),
-                new Regex("||")));
+                new Regex(@"\|")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_NOT.ToString(),
-                new Regex("!")));
+                new Regex(@"!")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_GROUP_START.ToString(),
-                new Regex("\\(")));
+                new Regex(@"\(")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_GROUP_END.ToString(),
-                new Regex("\\)")));
+                new Regex(@"\)")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_MATCH.ToString(),
-                new Regex(".+")));
+                new Regex("[0-9A-Za-z-_]+")));
+
+            _lexer.AddDefinition(new TokenDefinition(
+                TokenType.WHITESPACE.ToString(),
+                new Regex(@"\s")));
         }
 
         /// <summary>
@@ -61,14 +65,13 @@ namespace UNM.Parser
         /// <returns>The expression tree representation of <paramref name="expression"/>.</returns>
         public IContextExpression ParseExpression(string expression)
         {
+            var stack = new Stack<IContextExpression>();
+
             try
             {
                 var tokens = _lexer.Tokenize(expression)
                     .Where(x => x.Type != "(end)")
-                    .Reverse()
                     .ToArray();
-
-                IContextExpression rootExpression = null;
 
                 foreach(var token in tokens)
                 {
@@ -76,8 +79,18 @@ namespace UNM.Parser
 
                     switch(typeEnum)
                     {
-                        case TokenType.EXPRESSION_AND:
-                            HandleAnd
+                        case TokenType.WHITESPACE:
+                            break;
+                        case TokenType.EXPRESSION_MATCH:
+                            HandleBasic(token, stack, new MatchExpression(token.Value));
+                            break;
+                        case TokenType.EXPRESSION_NOT:
+                            HandleBasic(token, stack, new NotExpression());
+                            break;
+                        default:
+                            throw new ExpressionParseException(string.Format(
+                                "Unexpected token: {0} at position: {1}",
+                                token.Type, token.Position));
                     }
                 }
             }
@@ -87,7 +100,54 @@ namespace UNM.Parser
                     ex);
             }
 
-            return new EmptyExpression();
+            if (!stack.Any())
+            {
+                return new EmptyExpression();
+            }
+
+            if(stack.Count > 1)
+            {
+                throw new ExpressionParseException(string.Format(
+                    "Exception in lexing expression {0}, expression contains multiple root level nodes.",
+                    expression));
+            }
+
+            return stack.First();
+        }
+
+        private void HandleBasic(Token token, Stack<IContextExpression> stack,
+            IContextExpression newNode)
+        {
+            if (stack.Any())
+            {
+                if (stack.Peek() is NotExpression)
+                {
+                    if ((stack.Peek() as NotExpression).SubExpression != null)
+                    {
+                        throw new ExpressionParseException(string.Format(
+                                "Unexpected token: {0} at position: {1}",
+                                token.Type, token.Position));
+                    }
+
+                    (stack.Peek() as NotExpression).SubExpression = newNode;
+                }
+
+                if (stack.Peek() is NodeExpression)
+                {
+                    if ((stack.Peek() as NodeExpression).LeftChild != null)
+                    {
+                        throw new ExpressionParseException(string.Format(
+                                "Unexpected token: {0} at position: {1}",
+                                token.Type, token.Position));
+                    }
+
+                    (stack.Peek() as NodeExpression).LeftChild = newNode;
+                }
+            }
+            else
+            {
+                stack.Push(newNode);
+            }
         }
     }
 }

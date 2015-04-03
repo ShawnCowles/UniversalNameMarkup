@@ -56,33 +56,38 @@
         TAG_SUB_PATTERN,
 
         /// <summary>
-        /// Tag defining the start of a grouping.
+        /// Token defining the start of a grouping.
         /// </summary>
         EXPRESSION_GROUP_START,
 
         /// <summary>
-        /// Tag defining the end of a grouping.
+        /// Token defining the end of a grouping.
         /// </summary>
         EXPRESSION_GROUP_END,
 
         /// <summary>
-        /// Tag defining a NOT.
+        /// Token defining a NOT.
         /// </summary>
         EXPRESSION_NOT,
 
         /// <summary>
-        /// Tag defining an AND
+        /// Token defining an AND
         /// </summary>
         EXPRESSION_AND,
 
         /// <summary>
-        /// Tag defining an OR
+        /// Token defining an OR
         /// </summary>
         EXPRESSION_OR,
 
         /// <summary>
-        /// Tag defining match component of expression
+        /// Token defining match component of expression
         /// </summary>
         EXPRESSION_MATCH,
+
+        /// <summary>
+        /// Token defining whitespace
+        /// </summary>
+        WHITESPACE,
     }
 }
