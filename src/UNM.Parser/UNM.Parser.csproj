@@ -50,10 +50,12 @@
     <Compile Include="ContextExpressions\AndExpression.cs" />
     <Compile Include="ContextExpressions\EmptyExpression.cs" />
     <Compile Include="ContextExpressions\IContextExpression.cs" />
+    <Compile Include="ExpressionParseException.cs" />
     <Compile Include="FileNamelistSource.cs" />
     <Compile Include="IContextExpressionParser.cs" />
     <Compile Include="INamelistSource.cs" />
     <Compile Include="IPatternLexer.cs" />
+    <Compile Include="ContextExpressionParser.cs" />
     <Compile Include="PatternLexer.cs" />
     <Compile Include="PatternProcessingParameters.cs" />
     <Compile Include="PatternToken.cs" />

@@ -8,6 +8,11 @@ namespace UNM.Parser
     public interface IContextExpressionParser
     {
         /// <summary>
+        /// Perform any needed initialization steps.
+        /// </summary>
+        void Initialize();
+
+        /// <summary>
         /// Parse a context expression into an expression tree.
         /// </summary>
         /// <param name="expression">The context expression as a string.</param>

@@ -53,6 +53,36 @@
         /// <summary>
         /// Tag defining a pattern that should be looked up, processed, and substituted in.
         /// </summary>
-        TAG_SUB_PATTERN
+        TAG_SUB_PATTERN,
+
+        /// <summary>
+        /// Tag defining the start of a grouping.
+        /// </summary>
+        EXPRESSION_GROUP_START,
+
+        /// <summary>
+        /// Tag defining the end of a grouping.
+        /// </summary>
+        EXPRESSION_GROUP_END,
+
+        /// <summary>
+        /// Tag defining a NOT.
+        /// </summary>
+        EXPRESSION_NOT,
+
+        /// <summary>
+        /// Tag defining an AND
+        /// </summary>
+        EXPRESSION_AND,
+
+        /// <summary>
+        /// Tag defining an OR
+        /// </summary>
+        EXPRESSION_OR,
+
+        /// <summary>
+        /// Tag defining match component of expression
+        /// </summary>
+        EXPRESSION_MATCH,
     }
 }
