@@ -44,6 +44,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CapitalizationScheme.cs" />
+    <Compile Include="ContextExpressions\MatchExpression.cs" />
+    <Compile Include="ContextExpressions\NotExpression.cs" />
+    <Compile Include="ContextExpressions\OrExpression.cs" />
+    <Compile Include="ContextExpressions\AndExpression.cs" />
+    <Compile Include="ContextExpressions\EmptyExpression.cs" />
     <Compile Include="ContextExpressions\IContextExpression.cs" />
     <Compile Include="FileNamelistSource.cs" />
     <Compile Include="IContextExpressionParser.cs" />

@@ -20,6 +20,7 @@ namespace UNM.Parser
         /// Construct a new FileNamelistSource
         /// </summary>
         /// <param name="sourceFile">The path to load Namelists from.</param>
+        /// <param name="contextParser">The <see cref="IContextExpressionParser"/> to use to parse context expressions.</param>
         public FileNamelistSource(string sourceFile, IContextExpressionParser contextParser)
         {
             _sourceFile = sourceFile;
