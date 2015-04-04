@@ -89,5 +89,24 @@ namespace UNM.Parser
             Assert.True(expression.Matches(new[] { secondMatch, firstMatch }));
             Assert.True(expression.Matches(new[] { secondMatch, _fixture.Create<string>(), firstMatch }));
         }
+
+        [Test]
+        public void Complex_logic_test()
+        {
+            var firstMatch = _fixture.Create<string>();
+            var secondMatch = _fixture.Create<string>();
+            var thirdMatch = _fixture.Create<string>();
+
+            var input = string.Format("{0} && {1} || ! {2}",
+                firstMatch, secondMatch, thirdMatch);
+
+            var expression = _parser.ParseExpression(input);
+
+            Assert.True(expression.Matches(_fixture.CreateMany<string>()));
+            Assert.False(expression.Matches(new[] { thirdMatch }));
+            Assert.False(expression.Matches(new[] { secondMatch, thirdMatch }));
+            Assert.False(expression.Matches(new[] { firstMatch, thirdMatch }));
+            Assert.True(expression.Matches(new[] { firstMatch, thirdMatch, secondMatch }));
+        }
     }
 }
