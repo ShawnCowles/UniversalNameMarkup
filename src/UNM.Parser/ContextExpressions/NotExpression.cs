@@ -11,7 +11,7 @@ namespace UNM.Parser.ContextExpressions
         /// <summary>
         /// The sub expression to NOT .
         /// </summary>
-        public IContextExpression SubExpression { get; set; }
+        public IContextExpression Child { get; set; }
 
         /// <summary>
         /// Construct a new NotExpression.
@@ -27,7 +27,7 @@ namespace UNM.Parser.ContextExpressions
         /// <returns>True if <paramref name="context"/> matches this expression.</returns>
         public bool Matches(IEnumerable<string> context)
         {
-            return !SubExpression.Matches(context);
+            return !Child.Matches(context);
         }
     }
 }

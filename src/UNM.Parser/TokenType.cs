@@ -56,16 +56,6 @@
         TAG_SUB_PATTERN,
 
         /// <summary>
-        /// Token defining the start of a grouping.
-        /// </summary>
-        EXPRESSION_GROUP_START,
-
-        /// <summary>
-        /// Token defining the end of a grouping.
-        /// </summary>
-        EXPRESSION_GROUP_END,
-
-        /// <summary>
         /// Token defining a NOT.
         /// </summary>
         EXPRESSION_NOT,

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ContextExpressionParserTest.cs" />
+    <Compile Include="ContextExpressionTests.cs" />
     <Compile Include="NameFragmentTest.cs" />
     <Compile Include="PatternLexerTest.cs" />
     <Compile Include="SimpleLexer\LexerTest.cs" />

@@ -35,19 +35,11 @@ namespace UNM.Parser
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_OR.ToString(),
-                new Regex(@"\|")));
+                new Regex(@"\|\|")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_NOT.ToString(),
                 new Regex(@"!")));
-
-            _lexer.AddDefinition(new TokenDefinition(
-                TokenType.EXPRESSION_GROUP_START.ToString(),
-                new Regex(@"\(")));
-
-            _lexer.AddDefinition(new TokenDefinition(
-                TokenType.EXPRESSION_GROUP_END.ToString(),
-                new Regex(@"\)")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.EXPRESSION_MATCH.ToString(),
@@ -82,10 +74,16 @@ namespace UNM.Parser
                         case TokenType.WHITESPACE:
                             break;
                         case TokenType.EXPRESSION_MATCH:
-                            HandleBasic(token, stack, new MatchExpression(token.Value));
+                            AttachToStack(stack, new MatchExpression(token.Value));
                             break;
                         case TokenType.EXPRESSION_NOT:
-                            HandleBasic(token, stack, new NotExpression());
+                            HandleNot(stack, new NotExpression());
+                            break;
+                        case TokenType.EXPRESSION_AND:
+                            HandleNode(token, stack, new AndExpression());
+                            break;
+                        case TokenType.EXPRESSION_OR:
+                            HandleNode(token, stack, new OrExpression());
                             break;
                         default:
                             throw new ExpressionParseException(string.Format(
@@ -115,39 +113,63 @@ namespace UNM.Parser
             return stack.First();
         }
 
-        private void HandleBasic(Token token, Stack<IContextExpression> stack,
-            IContextExpression newNode)
+        private void AttachToStack(Stack<IContextExpression> stack, IContextExpression newNode)
         {
             if (stack.Any())
             {
-                if (stack.Peek() is NotExpression)
+                var parent = stack.Pop();
+
+                if (parent is NotExpression)
                 {
-                    if ((stack.Peek() as NotExpression).SubExpression != null)
+                    if ((parent as NotExpression).Child != null)
                     {
                         throw new ExpressionParseException(string.Format(
-                                "Unexpected token: {0} at position: {1}",
-                                token.Type, token.Position));
+                                "Parent for {0} already full.",
+                                newNode.GetType().Name));
                     }
 
-                    (stack.Peek() as NotExpression).SubExpression = newNode;
+                    (parent as NotExpression).Child = newNode;
+
+                    AttachToStack(stack, parent);
                 }
 
-                if (stack.Peek() is NodeExpression)
+                if (parent is NodeExpression)
                 {
-                    if ((stack.Peek() as NodeExpression).LeftChild != null)
+                    if ((parent as NodeExpression).RightChild != null)
                     {
                         throw new ExpressionParseException(string.Format(
-                                "Unexpected token: {0} at position: {1}",
-                                token.Type, token.Position));
+                                "Parent for {0} already full.",
+                                newNode.GetType().Name));
                     }
 
-                    (stack.Peek() as NodeExpression).LeftChild = newNode;
+                    (parent as NodeExpression).RightChild = newNode;
+
+                    AttachToStack(stack, parent);
                 }
             }
             else
             {
                 stack.Push(newNode);
             }
+        }
+
+        private void HandleNot(Stack<IContextExpression> stack, NotExpression node)
+        {
+            stack.Push(node);
+        }
+
+        private void HandleNode(Token token, Stack<IContextExpression> stack, NodeExpression node)
+        {
+            if(!stack.Any())
+            {
+                throw new ExpressionParseException(string.Format(
+                    "AND without expression to left, position {0}",
+                    token.Position));
+            }
+
+            node.LeftChild = stack.Pop();
+
+            stack.Push(node);
         }
     }
 }

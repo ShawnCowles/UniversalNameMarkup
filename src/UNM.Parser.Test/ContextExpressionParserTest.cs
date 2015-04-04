@@ -83,7 +83,7 @@ namespace UNM.Parser
 
             Assert.That(result, Is.TypeOf<NotExpression>());
 
-            var child = (result as NotExpression).SubExpression;
+            var child = (result as NotExpression).Child;
 
             Assert.That(child, Is.TypeOf<MatchExpression>());
 
@@ -100,8 +100,6 @@ namespace UNM.Parser
             var parser = new ContextExpressionParser(new Lexer());
 
             parser.Initialize();
-
-            //var inputExpression = firstMatch + " && " + secondMatch;
 
             var inputExpression = firstMatch + " && " + secondMatch;
 
@@ -121,32 +119,73 @@ namespace UNM.Parser
         }
 
         [Test]
-        public void ParseExpression_returns_proper_result_for_simple_expression()
+        public void ParseExpression_returns_expected_for_ored_match_expressions()
         {
             var firstMatch = _fixture.Create<string>();
-            var secondMatch = _fixture.Create<string>();
-            var thirdMatch = _fixture.Create<string>();
 
-            var inputExpression = string.Format("{0} && ({1} || ! {2})",
-                firstMatch, secondMatch, thirdMatch);
+            var secondMatch = _fixture.Create<string>();
 
             var parser = new ContextExpressionParser(new Lexer());
 
             parser.Initialize();
 
+            var inputExpression = firstMatch + " || " + secondMatch;
+
             var result = parser.ParseExpression(inputExpression);
 
-            Assert.That(result, Is.TypeOf<AndExpression>());
+            Assert.That(result, Is.TypeOf<OrExpression>());
 
-            Assert.True(result.Matches(new[] { firstMatch }));
+            var left = (result as OrExpression).LeftChild;
 
-            Assert.False(result.Matches(new[] { firstMatch, thirdMatch }));
+            var right = (result as OrExpression).RightChild;
 
-            Assert.False(result.Matches(new[] { thirdMatch }));
+            Assert.That(left, Is.TypeOf<MatchExpression>());
+            Assert.That(right, Is.TypeOf<MatchExpression>());
 
-            Assert.False(result.Matches(new[] { secondMatch }));
+            Assert.That((left as MatchExpression).Match, Is.EqualTo(firstMatch));
+            Assert.That((right as MatchExpression).Match, Is.EqualTo(secondMatch));
+        }
 
-            Assert.False(result.Matches(new[] { secondMatch, thirdMatch }));
+        [Test]
+        public void ParseExpression_returns_expected_for_complex_expression()
+        {
+            var firstMatch = _fixture.Create<string>();
+
+            var secondMatch = _fixture.Create<string>();
+
+            var thirdMatch = _fixture.Create<string>();
+
+            var parser = new ContextExpressionParser(new Lexer());
+
+            parser.Initialize();
+
+            var inputExpression = string.Format("{0} && {1} || ! {2}",
+                firstMatch, secondMatch, thirdMatch);
+
+            var result = parser.ParseExpression(inputExpression);
+
+            Assert.That(result, Is.TypeOf<OrExpression>());
+
+            var left = (result as OrExpression).LeftChild;
+
+            var right = (result as OrExpression).RightChild;
+
+            Assert.That(left, Is.TypeOf<AndExpression>());
+            Assert.That(right, Is.TypeOf<NotExpression>());
+
+            var leftLeft = (left as AndExpression).LeftChild;
+            var leftRight = (left as AndExpression).RightChild;
+
+            var rightRight = (right as NotExpression).Child;
+
+            Assert.That(leftLeft, Is.TypeOf<MatchExpression>());
+            Assert.That((leftLeft as MatchExpression).Match, Is.EqualTo(firstMatch));
+
+            Assert.That(leftRight, Is.TypeOf<MatchExpression>());
+            Assert.That((leftRight as MatchExpression).Match, Is.EqualTo(secondMatch));
+
+            Assert.That(rightRight, Is.TypeOf<MatchExpression>());
+            Assert.That((rightRight as MatchExpression).Match, Is.EqualTo(thirdMatch));
         }
     }
 }
