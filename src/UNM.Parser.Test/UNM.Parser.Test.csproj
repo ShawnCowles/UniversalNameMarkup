@@ -53,6 +53,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ContextExpressionParserTest.cs" />
+    <Compile Include="ContextExpressionTests.cs" />
     <Compile Include="NameFragmentTest.cs" />
     <Compile Include="PatternLexerTest.cs" />
     <Compile Include="SimpleLexer\LexerTest.cs" />
@@ -67,6 +69,9 @@
       <Project>{31a30e69-a8c9-4059-b2a7-0ef2c5d98a69}</Project>
       <Name>UNM.Parser</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

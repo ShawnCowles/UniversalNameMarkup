@@ -3,6 +3,7 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
+using UNM.Parser.ContextExpressions;
 
 namespace UNM.Parser
 {
@@ -76,13 +77,16 @@ namespace UNM.Parser
         {
             var testPattern = "<first_part><second_part>";
 
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = _fixture.Create<string>();
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = _fixture.Create<string>();
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var expectedResult = firstReplacement + secondReplacement;
 
@@ -326,28 +330,34 @@ namespace UNM.Parser
         {
             var testPattern = "pre<replaceme>post";
 
-            var properContext = _fixture.Create<string>();
-            var improperContext = _fixture.Create<string>();
+            var properContext = _fixture.CreateMany<string>();
+            var improperContext = _fixture.CreateMany<string>();
 
             var properReplacement = _fixture.Create<string>();
             var improperReplacement = _fixture.Create<string>();
 
+            var properExpression = new Mock<IContextExpression>();
+            properExpression.Setup(x => x.Matches(properContext)).Returns(true);
+
+            var improperExpression = new Mock<IContextExpression>();
+            improperExpression.Setup(x => x.Matches(improperContext)).Returns(true);
+
             var namelist = new Namelist("replaceme");
-            namelist.AddFragment(new NameFragment(properReplacement, new string[] { properContext }));
-            namelist.AddFragment(new NameFragment(improperReplacement, new string[] { improperContext }));
+            namelist.AddFragment(new NameFragment(properReplacement, properExpression.Object));
+            namelist.AddFragment(new NameFragment(improperReplacement, improperExpression.Object));
 
             var expectedResult = "";
 
-            var context = new List<string>();
+            IEnumerable<string> context;
 
             if (useProperContext)
             {
-                context.Add(properContext);
+                context = properContext;
                 expectedResult = "pre" + properReplacement + "post";
             }
             else
             {
-                context.Add(improperContext);
+                context = improperContext;
                 expectedResult = "pre" + improperReplacement + "post";
             }
             
@@ -484,9 +494,12 @@ namespace UNM.Parser
 
             var namelist = new Namelist("replaceme");
 
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             foreach (var replacement in replacements)
             {
-                namelist.AddFragment(new NameFragment(replacement, Enumerable.Empty<string>()));
+                namelist.AddFragment(new NameFragment(replacement, expression.Object));
             }
 
             var mockNamelistSource = new Mock<INamelistSource>();
@@ -531,13 +544,16 @@ namespace UNM.Parser
         [Test]
         public void Process_honors_capitalization_by_fragment()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = "first";
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = "second";
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var testPattern = "some begining <first_part> and. then SOME more <second_part> mIxeD CASe";
 
@@ -571,13 +587,16 @@ namespace UNM.Parser
         [Test]
         public void Process_honors_capitalization_by_word()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = "first";
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = "second";
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var testPattern = "some begining <first_part> and then. SOME more <second_part> mIxeD CASe";
 
@@ -611,13 +630,16 @@ namespace UNM.Parser
         [Test]
         public void Process_honors_capitalization_first_letter()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = "first";
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = "second";
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var testPattern = "some begining <first_part> and then. SOME more <second_part> mIxeD CASe";
 
@@ -651,13 +673,16 @@ namespace UNM.Parser
         [Test]
         public void Process_honors_capitalization_none()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = "first";
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = "second";
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var testPattern = "some begining <first_part> and then. SOME more <second_part> mIxeD CASe";
 
@@ -691,13 +716,16 @@ namespace UNM.Parser
         [Test]
         public void Process_honors_capitalization_by_sentence()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var firstNamelist = new Namelist("first_part");
             var firstReplacement = "first";
-            firstNamelist.AddFragment(new NameFragment(firstReplacement, Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment(firstReplacement, expression.Object));
 
             var secondNamelist = new Namelist("second_part");
             var secondReplacement = "second";
-            secondNamelist.AddFragment(new NameFragment(secondReplacement, Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment(secondReplacement, expression.Object));
 
             var testPattern = "some begining <first_part> and then. sOME more <second_part> mIxeD CASe";
 
@@ -731,6 +759,9 @@ namespace UNM.Parser
         [Test]
         public void Subpatterns_are_processed_before_being_substituted()
         {
+            var expression = new Mock<IContextExpression>();
+            expression.Setup(x => x.Matches(It.IsAny<IEnumerable<string>>())).Returns(true);
+
             var subPattern = "<first> and then the <second>";
 
             var pattern = "<^sub_pattern> and then some more <first>";
@@ -738,13 +769,13 @@ namespace UNM.Parser
             var expected = "first_sub and then the second_sub and then some more first_sub";
 
             var subPatternNamelist = new Namelist("sub_pattern");
-            subPatternNamelist.AddFragment(new NameFragment(subPattern, Enumerable.Empty<string>()));
+            subPatternNamelist.AddFragment(new NameFragment(subPattern, expression.Object));
 
             var firstNamelist = new Namelist("first");
-            firstNamelist.AddFragment(new NameFragment("first_sub", Enumerable.Empty<string>()));
+            firstNamelist.AddFragment(new NameFragment("first_sub", expression.Object));
 
             var secondNamelist = new Namelist("second");
-            secondNamelist.AddFragment(new NameFragment("second_sub", Enumerable.Empty<string>()));
+            secondNamelist.AddFragment(new NameFragment("second_sub", expression.Object));
 
             var mockNamelistSource = new Mock<INamelistSource>();
             mockNamelistSource

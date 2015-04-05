@@ -14,14 +14,18 @@ namespace UNM.Parser
 
         private string _sourceFile;
 
+        private IContextExpressionParser _expressionParser;
+
         /// <summary>
         /// Construct a new FileNamelistSource
         /// </summary>
         /// <param name="sourceFile">The path to load Namelists from.</param>
-        public FileNamelistSource(string sourceFile)
+        /// <param name="contextParser">The <see cref="IContextExpressionParser"/> to use to parse context expressions.</param>
+        public FileNamelistSource(string sourceFile, IContextExpressionParser contextParser)
         {
             _sourceFile = sourceFile;
             _namelists = new Dictionary<string, Namelist>();
+            _expressionParser = contextParser;
         }
 
         /// <summary>
@@ -29,6 +33,8 @@ namespace UNM.Parser
         /// </summary>
         public void Initialize()
         {
+            _expressionParser.Initialize();
+
             using(var reader = new CsvReader(new StreamReader(_sourceFile)))
             {
                 while (reader.Read())
@@ -46,16 +52,9 @@ namespace UNM.Parser
 
                     if (fragment.Length > 1)
                     {
-                        var contexts = new List<string>();
-                        for (int i = 2; i < reader.FieldHeaders.Length; i++)
-                        {
-                            if (reader.GetField(i).Length > 0)
-                            {
-                                contexts.Add(reader.GetField(i));
-                            }
-                        }
-
-                        list.AddFragment(new NameFragment(fragment, contexts));
+                        var contextExpression = _expressionParser.ParseExpression(reader.GetField(2));
+                        
+                        list.AddFragment(new NameFragment(fragment, contextExpression));
                     }
                 }
             }

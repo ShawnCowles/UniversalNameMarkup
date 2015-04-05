@@ -53,6 +53,31 @@
         /// <summary>
         /// Tag defining a pattern that should be looked up, processed, and substituted in.
         /// </summary>
-        TAG_SUB_PATTERN
+        TAG_SUB_PATTERN,
+
+        /// <summary>
+        /// Token defining a NOT.
+        /// </summary>
+        EXPRESSION_NOT,
+
+        /// <summary>
+        /// Token defining an AND
+        /// </summary>
+        EXPRESSION_AND,
+
+        /// <summary>
+        /// Token defining an OR
+        /// </summary>
+        EXPRESSION_OR,
+
+        /// <summary>
+        /// Token defining match component of expression
+        /// </summary>
+        EXPRESSION_MATCH,
+
+        /// <summary>
+        /// Token defining whitespace
+        /// </summary>
+        WHITESPACE,
     }
 }
