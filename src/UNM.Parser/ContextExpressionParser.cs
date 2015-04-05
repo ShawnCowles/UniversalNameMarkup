@@ -16,12 +16,20 @@ namespace UNM.Parser
         private ILexer _lexer;
 
         /// <summary>
-        /// Construct a new LexingContextExpressionParser.
+        /// Construct a new ContextExpressionParser.
         /// </summary>
         /// <param name="lexer">The internal <see cref="ILexer"/> that produces raw tokens.</param>
         public ContextExpressionParser(ILexer lexer)
         {
             _lexer = lexer;
+        }
+
+        /// <summary>
+        /// Construct a new ContextExpressionParser using the default <see cref="ILexer"/>.
+        /// </summary>
+        public ContextExpressionParser()
+        {
+            _lexer = new SimpleLexer.Lexer();
         }
 
         /// <summary>
