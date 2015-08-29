@@ -57,8 +57,8 @@ namespace UNM.Parser.SimpleLexer
                 if (matchedDefinition == null)
                 {
                     throw new Exception(string.Format(
-                        "Unrecognized symbol '{0}' at index {1} (line {2}, column {3}).",
-                        source[currentIndex], currentIndex, currentLine, currentColumn));
+                        "Unrecognized symbol '{0}' at index {1} (line {2}, column {3}) in pattern {4}.",
+                        source[currentIndex], currentIndex, currentLine, currentColumn, source));
                 }
                 else
                 {
