@@ -6,3 +6,7 @@ src/UNM.Lexer/obj/
 src/UNM.Parser.Test/obj/
 src/UNM.Parser/obj/
 TestResults/
+src/UNM.GCS.Test/bin/
+src/UNM.GCS.Test/obj/
+src/UNM.GCS/obj/
+src/UNM.Parser.Test/bin/
