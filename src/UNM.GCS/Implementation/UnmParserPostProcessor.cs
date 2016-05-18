@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UNM.GCS.Data;
 using UNM.GCS.Interfaces;
 using UNM.Parser;
 
@@ -26,18 +27,17 @@ namespace UNM.GCS.Implementation
         /// <summary>
         /// Process response text.
         /// </summary>
-        /// <param name="response">The text of the response.</param>
-        /// <param name="variables">The variables passed into the <see cref="IConversationSystem"/>.</param>
-        /// <returns>The processed text of the response.</returns>
-        public string Process(string response, Dictionary<string, string> variables)
+        /// <param name="input">The input set passed into the <see cref="IConversationSystem"/>.</param>
+        /// <param name="output">The output set being returned from the <see cref="IConversationSystem"/>.</param>
+        public void Process(InputSet input, OutputSet output)
         {
-            var parameters = new PatternProcessingParameters(response)
+            var parameters = new PatternProcessingParameters(output.Response)
             {
                 CapitalizationScheme = CapitalizationScheme.BY_SENTENCE,
-                Variables = variables
+                Variables = input.Variables
             };
 
-            return _nameParser.Process(parameters);
+            output.Response = _nameParser.Process(parameters);
         }
     }
 }

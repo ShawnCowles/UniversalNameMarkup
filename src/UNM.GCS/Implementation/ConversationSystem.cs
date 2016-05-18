@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using UNM.GCS.Data;
 using UNM.GCS.Interfaces;
 
@@ -10,6 +11,11 @@ namespace UNM.GCS.Implementation
     /// </summary>
     public class ConversationSystem : IConversationSystem
     {
+        private readonly IEnumerable<ITopicSource> _topicSources;
+        private readonly IEnumerable<IAvailabilityExpressionEvaluator> _expressionEvaluators;
+        private readonly IEnumerable<IPostProcessor> _postProcessors;
+        private readonly IEnumerable<IResponseActionProcessor> _actionProcessors;
+
         /// <summary>
         /// The response to give when no match can be found for the provided input.
         /// Defaults to "I don't know about that."
@@ -30,6 +36,10 @@ namespace UNM.GCS.Implementation
             IEnumerable<IResponseActionProcessor> actionProcessors)
         {
             UnmatchedResponse = "I don't know about that.";
+            _topicSources = topicSources;
+            _expressionEvaluators = expressionEvaluators;
+            _postProcessors = postProcessors;
+            _actionProcessors = actionProcessors;
         }
 
         /// <summary>
@@ -39,7 +49,50 @@ namespace UNM.GCS.Implementation
         /// <returns>The result of the conversation.</returns>
         public OutputSet Process(InputSet input)
         {
-            throw new NotImplementedException();
+            var topic = _topicSources
+                .SelectMany(ts => ts.GetTopics())
+                .FirstOrDefault(ts => ts.Name == input.Topic);
+            
+            Response chosenResponse = null;
+            
+            if(topic != null)
+            {
+                foreach(var response in topic.Responses)
+                {
+                    var matches = _expressionEvaluators
+                        .Any(e => e.Evaluate(response.AvailabilityExpression, input.Variables));
+
+                    if(matches)
+                    {
+                        chosenResponse = response;
+                        break;
+                    }
+                }
+
+            }
+
+            var output = new OutputSet();
+
+            if (chosenResponse != null)
+            {
+                output.Response = chosenResponse.Body;
+
+                foreach(var postProcessor in _postProcessors)
+                {
+                    postProcessor.Process(input, output);
+                }
+
+                foreach(var processor in _actionProcessors)
+                {
+                    processor.Process(input, output, chosenResponse.ResponseActionScript);
+                }
+            }
+            else
+            {
+                output.Response = UnmatchedResponse;
+            }
+
+            return output;
         }
 
         /// <summary>
@@ -49,7 +102,10 @@ namespace UNM.GCS.Implementation
         /// </summary>
         public IEnumerable<string> AvailableTopics(Dictionary<string, string> variables)
         {
-            throw new NotImplementedException();
+            return _topicSources
+                .SelectMany(ts => ts.GetTopics())
+                .Select(t => t.Name)
+                .ToArray();
         }
     }
 }

@@ -16,5 +16,14 @@ namespace UNM.GCS.Data
         /// Any non-response notifications, typically from response actions.
         /// </summary>
         public List<string> Notifications { get; set; }
+
+        /// <summary>
+        /// Construct an empty OutputSet.
+        /// </summary>
+        public OutputSet()
+        {
+            Response = "";
+            Notifications = new List<string>();
+        }
     }
 }

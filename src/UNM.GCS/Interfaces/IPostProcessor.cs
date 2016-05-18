@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+﻿using UNM.GCS.Data;
 
 namespace UNM.GCS.Interfaces
 {
@@ -10,9 +10,8 @@ namespace UNM.GCS.Interfaces
         /// <summary>
         /// Process response text.
         /// </summary>
-        /// <param name="response">The text of the response.</param>
-        /// <param name="variables">The variables passed into the <see cref="IConversationSystem"/>.</param>
-        /// <returns>The processed text of the response.</returns>
-        string Process(string response, Dictionary<string, string> variables);
+        /// <param name="input">The input set passed into the <see cref="IConversationSystem"/>.</param>
+        /// <param name="output">The output set being returned from the <see cref="IConversationSystem"/>.</param>
+        void Process(InputSet input, OutputSet output);
     }
 }
