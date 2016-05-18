@@ -43,6 +43,16 @@ namespace UNM.Parser
         }
 
         /// <summary>
+        /// Construct a new NameParser using the default <see cref="IPatternLexer"/> and the 
+        /// current milliseconds for the random seed.
+        /// </summary>
+        /// <param name="namelistSource">The source for namelists to use.</param>
+        public NameParser(INamelistSource namelistSource)
+            : this(namelistSource, new PatternLexer(new SimpleLexer.Lexer()), DateTime.Now.Millisecond)
+        {
+        }
+
+        /// <summary>
         /// Initialize the NameParser.
         /// </summary>
         public void Initialize()
