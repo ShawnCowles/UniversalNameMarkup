@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UNM.GCS</RootNamespace>
     <AssemblyName>UNM.GCS</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <OutputPath>$(SolutionDir)\output\$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>$(SolutionDir)\output\$(Configuration)\UNM.GCS.XML</DocumentationFile>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -41,9 +42,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\ExpressionNodes\AbstractNode.cs" />
+    <Compile Include="Data\ExpressionNodes\OrNode.cs" />
+    <Compile Include="Data\ExpressionNodes\AndNode.cs" />
+    <Compile Include="Data\ExpressionNodes\EqualityNode.cs" />
+    <Compile Include="Data\ExpressionNodes\ExpressionNode.cs" />
+    <Compile Include="Data\ExpressionNodes\VariableNode.cs" />
+    <Compile Include="Data\ExpressionNodes\ValueNode.cs" />
+    <Compile Include="ExpressionParseException.cs" />
     <Compile Include="Implementation\ConversationSystem.cs" />
     <Compile Include="Data\OutputSet.cs" />
     <Compile Include="Data\InputSet.cs" />
+    <Compile Include="Implementation\UnmParserPostProcessor.cs" />
+    <Compile Include="Implementation\VariableAvailabilityExpressionEvaluator.cs" />
     <Compile Include="Interfaces\IAvailabilityExpressionEvaluator.cs" />
     <Compile Include="Interfaces\IConversationSystem.cs" />
     <Compile Include="Interfaces\IPostProcessor.cs" />
@@ -53,7 +64,12 @@
     <Compile Include="Data\Response.cs" />
     <Compile Include="Data\Topic.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\UNM.Parser\UNM.Parser.csproj">
+      <Project>{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}</Project>
+      <Name>UNM.Parser</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
