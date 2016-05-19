@@ -242,5 +242,11 @@ namespace UNM.GCS.Test
 
             Assert.True(_evaluator.Evaluate(expression, variables));
         }
+
+        [Test]
+        public void Evaluate_passes_empty_expressions()
+        {
+            Assert.True(_evaluator.Evaluate("", new Dictionary<string, string>()));
+        }
     }
 }

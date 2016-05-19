@@ -142,7 +142,7 @@ namespace UNM.GCS.Implementation
                 }
             }
 
-            return nodeStack.Peek().Evaluate(variables);
+            return !nodeStack.Any() || nodeStack.Peek().Evaluate(variables);
         }
 
         private void LinkExpressions(Stack<AbstractNode> nodeStack)
