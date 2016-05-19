@@ -104,6 +104,9 @@ namespace UNM.GCS.Implementation
         {
             return _topicSources
                 .SelectMany(ts => ts.GetTopics())
+                .Where(t => t.Responses
+                    .Any(r => _expressionEvaluators
+                        .Any(e => e.Evaluate(r.AvailabilityExpression, variables))))
                 .Select(t => t.Name)
                 .ToArray();
         }
