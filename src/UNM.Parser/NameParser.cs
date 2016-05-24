@@ -8,7 +8,7 @@ namespace UNM.Parser
     /// <summary>
     /// The NameParser, processes patterns to produce names.
     /// </summary>
-    public class NameParser
+    public class NameParser : INameParser
     {
         private Random _random;
         private bool _initialized;
@@ -235,7 +235,7 @@ namespace UNM.Parser
         {
             if (token.Type == TokenType.TAG_BRANCH_CHANCE)
             {
-                var chance = Int32.Parse(TrimTag(1, token.Value));
+                var chance = int.Parse(TrimTag(1, token.Value));
 
                 return _random.Next(100) < chance;
             }

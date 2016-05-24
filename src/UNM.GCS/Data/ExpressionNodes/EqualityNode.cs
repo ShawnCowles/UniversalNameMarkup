@@ -38,9 +38,7 @@ namespace UNM.GCS.Data.ExpressionNodes
                 }
                 else
                 {
-                    throw new ExpressionParseException(string.Format(
-                        "Expected variable {0}, but it was not found.",
-                        leftKey));
+                    return false;
                 }
 
                 if(Right is ValueNode)
@@ -59,9 +57,7 @@ namespace UNM.GCS.Data.ExpressionNodes
                     }
                     else
                     {
-                        throw new ExpressionParseException(string.Format(
-                            "Expected variable {0}, but it was not found.",
-                            rightKey));
+                        return false;
                     }
                 }
                 else

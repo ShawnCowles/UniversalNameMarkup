@@ -248,5 +248,13 @@ namespace UNM.GCS.Test
         {
             Assert.True(_evaluator.Evaluate("", new Dictionary<string, string>()));
         }
+
+        [Test]
+        public void Evaluate_treats_missing_variables_as_false()
+        {
+            var expression = "variable=\"val\"";
+
+            Assert.False(_evaluator.Evaluate(expression, new Dictionary<string, string>()));
+        }
     }
 }

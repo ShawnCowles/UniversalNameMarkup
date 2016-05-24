@@ -52,6 +52,7 @@
     <Compile Include="FileNamelistSource.cs" />
     <Compile Include="IContextExpressionParser.cs" />
     <Compile Include="INamelistSource.cs" />
+    <Compile Include="INameParser.cs" />
     <Compile Include="IPatternLexer.cs" />
     <Compile Include="ContextExpressionParser.cs" />
     <Compile Include="PatternLexer.cs" />
