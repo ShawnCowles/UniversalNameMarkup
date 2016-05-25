@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UNM.GCS.Data;
 using UNM.GCS.Interfaces;
 using UNM.Parser;
@@ -33,7 +34,8 @@ namespace UNM.GCS.Implementation
             var parameters = new PatternProcessingParameters(output.Response)
             {
                 CapitalizationScheme = CapitalizationScheme.BY_SENTENCE,
-                Variables = input.Variables
+                Variables = input.Variables,
+                Context = input.Variables.Keys.ToArray()
             };
 
             output.Response = _nameParser.Process(parameters);

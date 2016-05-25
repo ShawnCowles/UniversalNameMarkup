@@ -15,6 +15,8 @@ namespace UNM.Parser
     {
         private ILexer _lexer;
 
+        private bool _initialized;
+
         /// <summary>
         /// Construct a new ContextExpressionParser.
         /// </summary>
@@ -29,7 +31,7 @@ namespace UNM.Parser
         /// </summary>
         public ContextExpressionParser()
         {
-            _lexer = new SimpleLexer.Lexer();
+            _lexer = new Lexer();
         }
 
         /// <summary>
@@ -56,6 +58,8 @@ namespace UNM.Parser
             _lexer.AddDefinition(new TokenDefinition(
                 TokenType.WHITESPACE.ToString(),
                 new Regex(@"\s")));
+
+            _initialized = true;
         }
 
         /// <summary>
@@ -65,6 +69,11 @@ namespace UNM.Parser
         /// <returns>The expression tree representation of <paramref name="expression"/>.</returns>
         public IContextExpression ParseExpression(string expression)
         {
+            if(!_initialized)
+            {
+                throw new Exception("ContextExpressionParser must be initialized before use.");
+            }
+
             var stack = new Stack<IContextExpression>();
 
             try

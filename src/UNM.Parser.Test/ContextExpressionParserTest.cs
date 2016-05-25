@@ -185,5 +185,17 @@ namespace UNM.Parser
             Assert.That(rightRight, Is.TypeOf<MatchExpression>());
             Assert.That((rightRight as MatchExpression).Match, Is.EqualTo(thirdMatch));
         }
+
+        [Test]
+        public void ParseExpression_handles_contexts_with_dashes_and_underscores()
+        {
+            var parser = new ContextExpressionParser(new Lexer());
+
+            parser.Initialize();
+
+            var inputExpression = "queststatus_undiscovered";
+
+            var result = parser.ParseExpression(inputExpression);
+        }
     }
 }
