@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace UNM.Parser
+﻿namespace UNM.Parser
 {
     /// <summary>
     /// A single token from a UNM pattern.

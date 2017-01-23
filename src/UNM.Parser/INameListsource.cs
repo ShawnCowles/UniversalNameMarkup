@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-
-namespace UNM.Parser
+﻿namespace UNM.Parser
 {
     /// <summary>
     /// An interface for providing Namelists to the <see cref="NameParser"/>
