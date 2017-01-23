@@ -10,7 +10,7 @@
         <projectUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</projectUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
         <description>
-            A library for procedural text generation using markup strings and recursive word selection.
+            A library for procedural text generation using markup strings and recursive word selection. Please check the readme at the project url for a syntax and usage guide.
         </description>
         <releaseNotes>Initial release</releaseNotes>
         <copyright>Copyright 2013</copyright>
