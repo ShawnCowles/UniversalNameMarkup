@@ -4,7 +4,7 @@ cd src\UNM.Parser
 
 nuget pack UNM.Parser.csproj -Symbols -Build -Properties Configuration=Release;Platform=AnyCpu
 
-REM nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
+nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
 
 del *.nupkg
 
