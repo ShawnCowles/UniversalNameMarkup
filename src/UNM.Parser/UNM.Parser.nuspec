@@ -12,7 +12,7 @@
         <description>
             A library for procedural text generation using markup strings and recursive word selection. Please check the readme at the project url for a syntax and usage guide.
         </description>
-        <releaseNotes>Initial release</releaseNotes>
+        <releaseNotes>Stop copying the SimpleLexer readme on adding the nuget package.</releaseNotes>
         <copyright>Copyright 2013</copyright>
         <tags></tags>
     </metadata>

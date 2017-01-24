@@ -6,3 +6,4 @@ src/UNM.Lexer/obj/
 src/UNM.Parser.Test/obj/
 src/UNM.Parser/obj/
 TestResults/
+.vs/
