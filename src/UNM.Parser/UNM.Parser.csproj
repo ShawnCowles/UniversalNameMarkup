@@ -71,10 +71,11 @@
     <Compile Include="TokenType.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="SimpleLexer\README.txt" />
+    <None Include="SimpleLexer\README.txt" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+    <None Include="UNM.Parser.nuspec" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
