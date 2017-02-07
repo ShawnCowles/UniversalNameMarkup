@@ -11,3 +11,5 @@ src/UNM.GCS.Test/bin/
 src/UNM.GCS.Test/obj/
 src/UNM.GCS/obj/
 src/UNM.Parser.Test/bin/
+src/UNM.GCS/bin/
+src/UNM.Parser/bin/
