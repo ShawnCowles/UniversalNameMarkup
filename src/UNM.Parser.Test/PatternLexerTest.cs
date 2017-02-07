@@ -4,6 +4,8 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
+using UNM.Parser.Data;
+using UNM.Parser.Implementation;
 using UNM.Parser.SimpleLexer;
 
 namespace UNM.Parser

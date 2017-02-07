@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UNM.Parser.Data;
+using UNM.Parser.Interfaces;
 
-namespace UNM.Parser
+namespace UNM.Parser.Implementation
 {
     /// <summary>
     /// The NameParser, processes patterns to produce names.

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
+using UNM.Parser.Data;
 
-namespace UNM.Parser
+namespace UNM.Parser.Interfaces
 {
     /// <summary>
     /// Interface for a UNM pattern lexer which can pull tokens from a pattern.

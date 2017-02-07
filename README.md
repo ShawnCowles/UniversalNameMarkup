@@ -25,7 +25,7 @@ The input pattern passed into the NameParser should be a text string containing 
 
 <namelist_name> - A fragment tag, NameParser will replace the tag with a fragment chosen from the namelist named within the tag itself.
 
-<#varaible_name> - A varaible substitution tag. NameParser will replace the tag with the value of the specified variable.
+<#varaible_name> - A variable substitution tag. NameParser will replace the tag with the value of the specified variable.
 
 <^namelist_name> - A sub pattern tag. NameParser will replace the tag with a fragment chosen from the namelist named within the tag itself, then process the fragment as if it was a new pattern itself.
 
@@ -37,13 +37,13 @@ The input pattern passed into the NameParser should be a text string containing 
 
 # Context Expression Syntax #
 
-The context expression format is straightfoward. It should consist of a series of context names, joined by boolean operators. If a context name is present it will evaluate to true, false otherwise. AND (%%) OR (||) and NOT(!) operators are supported.
+The context expression format is straightforward. It should consist of a series of context names, joined by boolean operators. If a context name is present it will evaluate to true, false otherwise. AND (%%) OR (||) and NOT(!) operators are supported.
 
     a_context || another_context && ! some_other_one
 
 # NameList File Syntax # 
 
-ameParser requires a namelist source to read namelists from during initialization. The default is the FileNamelistSource that reads from CSV files. The expected CSV format is straightfoward, one fragment to a row. The first column should be the name of the namelist the fragment belongs two, the second column should be the fragment itself, the third column  should either be empty, or a context expression for the fragment.
+ameParser requires a namelist source to read namelists from during initialization. The default is the FileStreamNamelistSource that reads from CSV files. The expected CSV format is straightforward, one fragment to a row. The first column should be the name of the namelist the fragment belongs two, the second column should be the fragment itself, the third column  should either be empty, or a context expression for the fragment.
 
 # Capitalization Scheme #
 

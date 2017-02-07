@@ -1,5 +1,6 @@
 ﻿using NUnit.Framework;
 using Ploeh.AutoFixture;
+using UNM.Parser.Implementation;
 using UNM.Parser.SimpleLexer;
 
 namespace UNM.Parser

@@ -1,4 +1,4 @@
-﻿namespace UNM.Parser
+﻿namespace UNM.Parser.Data
 {
     /// <summary>
     /// An enumeration of all possible tokens in an UNM pattern.
@@ -6,12 +6,12 @@
     public enum TokenType
     {
         /// <summary>
-        /// Tag defining a subistution for a name fragment.
+        /// Tag defining a substitution for a name fragment.
         /// </summary>
         TAG_SUB_FRAGMENT,
 
         /// <summary>
-        /// Tag defining a subsitution for a variable.
+        /// Tag defining a substitution for a variable.
         /// </summary>
         TAG_SUB_VARIABLE,
 

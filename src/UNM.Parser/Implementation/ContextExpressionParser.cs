@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using UNM.Parser.ContextExpressions;
+using UNM.Parser.Data;
+using UNM.Parser.Interfaces;
 using UNM.Parser.SimpleLexer;
 
-namespace UNM.Parser
+namespace UNM.Parser.Implementation
 {
     /// <summary>
     /// Default implementation of IContextEpressionParser, uses an internal <see cref="ILexer"/>

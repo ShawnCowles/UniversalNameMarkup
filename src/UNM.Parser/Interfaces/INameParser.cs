@@ -1,4 +1,4 @@
-﻿namespace UNM.Parser
+﻿namespace UNM.Parser.Interfaces
 {
     /// <summary>
     /// An interface for a NameParser, processes patterns to produce names.

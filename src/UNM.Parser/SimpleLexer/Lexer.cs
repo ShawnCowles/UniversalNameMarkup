@@ -13,14 +13,14 @@ namespace UNM.Parser.SimpleLexer
     /// </summary>
     public class Lexer : ILexer
     {
-        private Regex endOfLineRegex = new Regex(@"\r\n|\r|\n", RegexOptions.Compiled);
+        private Regex endOfLineRegex = new Regex(@"\r\n|\r|\n");
 
         private IList<TokenDefinition> tokenDefinitions = new List<TokenDefinition>();
 
         /// <summary>
         /// Add a token definition to the lexer.
         /// </summary>
-        /// <param name="tokenDefinition">The token defintion to add.</param>
+        /// <param name="tokenDefinition">The token definition to add.</param>
         public void AddDefinition(TokenDefinition tokenDefinition)
         {
             tokenDefinitions.Add(tokenDefinition);

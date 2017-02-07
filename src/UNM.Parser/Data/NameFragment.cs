@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UNM.Parser.ContextExpressions;
 
-namespace UNM.Parser
+namespace UNM.Parser.Data
 {
     /// <summary>
     /// A fragment to substitute into a pattern.

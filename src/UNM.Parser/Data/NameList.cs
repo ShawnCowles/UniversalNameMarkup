@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace UNM.Parser
+namespace UNM.Parser.Data
 {
     /// <summary>
     /// A set of NameFragments all falling under the same listname.
