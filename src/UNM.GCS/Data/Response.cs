@@ -15,7 +15,7 @@ namespace UNM.GCS.Data
         public string Body { get; private set; }
 
         /// <summary>
-        /// An expression that can be evaluated to determine if the response is avilaible. Needs 
+        /// An expression that can be evaluated to determine if the response is available. Needs 
         /// and example.
         /// </summary>
         public string AvailabilityExpression { get; private set; }
@@ -30,7 +30,7 @@ namespace UNM.GCS.Data
         /// Construct a new Response.
         /// </summary>
         /// <param name="body">The text body of the response.</param>
-        /// <param name="availabilityExpression">An expression that can be evaluated to determine if the response is avilaible. Needs and example.</param>
+        /// <param name="availabilityExpression">An expression that can be evaluated to determine if the response is available. Needs and example.</param>
         /// <param name="responseActionScript">A script to execute through a <see cref="IResponseActionProcessor"/> if this response is chosen.</param>
         public Response(string body, string availabilityExpression, string responseActionScript)
         {

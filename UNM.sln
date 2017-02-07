@@ -9,6 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		deploy_nuget.bat = deploy_nuget.bat
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		VersionInfo.cs = VersionInfo.cs
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNM.Parser", "src\UNM.Parser\UNM.Parser.csproj", "{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}"
@@ -18,6 +19,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNM.GCS", "src\UNM.GCS\UNM.GCS.csproj", "{605916AA-623D-496E-8651-4AB3C0D091B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UNM.GCS.Test", "src\UNM.GCS.Test\UNM.GCS.Test.csproj", "{5AD04D30-D4E2-4079-A230-B015FD6BAE2D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{46DB2CB7-0CC9-4306-9155-85FFB4CEA98F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Source", "Source", "{42EC9CF4-AA66-4354-A2CF-9900A83B5A65}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -76,5 +81,11 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69} = {42EC9CF4-AA66-4354-A2CF-9900A83B5A65}
+		{AB188CB9-672A-4BC6-8D0C-227AAA97F6C5} = {46DB2CB7-0CC9-4306-9155-85FFB4CEA98F}
+		{605916AA-623D-496E-8651-4AB3C0D091B4} = {42EC9CF4-AA66-4354-A2CF-9900A83B5A65}
+		{5AD04D30-D4E2-4079-A230-B015FD6BAE2D} = {46DB2CB7-0CC9-4306-9155-85FFB4CEA98F}
 	EndGlobalSection
 EndGlobal

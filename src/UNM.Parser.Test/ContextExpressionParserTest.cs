@@ -44,6 +44,7 @@ namespace UNM.Parser
         public void ParseExpression_returns_EmptyExpression_for_zero_length_string()
         {
             var parser = new ContextExpressionParser(new Lexer());
+            parser.Initialize();
 
             var result = parser.ParseExpression("");
 
