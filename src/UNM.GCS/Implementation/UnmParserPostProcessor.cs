@@ -9,7 +9,9 @@ using UNM.Parser.Interfaces;
 namespace UNM.GCS.Implementation
 {
     /// <summary>
-    /// A post processor that runs the response text through a UNM <see cref="NameParser"/>.
+    /// A post processor that runs the response text through a UNM <see cref="NameParser"/>. 
+    /// Variables from the <see cref="InputSet"/> are used as variables in UNM parsing, and the names 
+    /// of the variables are also used as context in UNM parsing.
     /// </summary>
     public class UnmParserPostProcessor : IPostProcessor
     {

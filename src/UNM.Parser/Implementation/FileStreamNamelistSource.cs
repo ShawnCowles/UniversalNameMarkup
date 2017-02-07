@@ -31,6 +31,15 @@ namespace UNM.Parser.Implementation
         }
 
         /// <summary>
+        /// Construct a new FileStreamNamelistSource using the default <see cref="IContextExpressionParser"/>.
+        /// </summary>
+        /// <param name="sourceStream">The stream to load Namelists from. Should provide a .csv format.</param>
+        public FileStreamNamelistSource(Stream sourceStream)
+            :this(sourceStream, new ContextExpressionParser())
+        {
+        }
+
+        /// <summary>
         /// Initialize the FileStreamNamelistSource. Reads and parses the .csv stream.
         /// </summary>
         public void Initialize()
