@@ -7,8 +7,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		commands.json = commands.json
 		deploy_nuget.bat = deploy_nuget.bat
+		GCS Guide.md = GCS Guide.md
 		LICENSE.txt = LICENSE.txt
 		README.md = README.md
+		UNM Guide.md = UNM Guide.md
 		VersionInfo.cs = VersionInfo.cs
 	EndProjectSection
 EndProject

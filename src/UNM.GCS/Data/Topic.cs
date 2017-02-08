@@ -15,6 +15,11 @@ namespace UNM.GCS.Data
         public string Name { get; private set; }
 
         /// <summary>
+        /// Is the topic user visible (i.e. in a list of topics to choose from)
+        /// </summary>
+        public bool IsUserVisible { get; private set; }
+
+        /// <summary>
         /// The responses within this topic, in priority order.
         /// </summary>
         public IEnumerable<Response> Responses { get; private set; }
@@ -24,10 +29,12 @@ namespace UNM.GCS.Data
         /// </summary>
         /// <param name="name">The name of the topic, used to select it in conversation.</param>
         /// <param name="responses">The responses within this topic, in priority order.</param>
-        public Topic(string name, IEnumerable<Response> responses)
+        /// <param name="isUserVisible">Is the topic user visible. (defaults to true).</param>
+        public Topic(string name, IEnumerable<Response> responses, bool isUserVisible = true)
         {
             Name = name;
             Responses = responses;
+            IsUserVisible = isUserVisible;
         }
     }
 }
