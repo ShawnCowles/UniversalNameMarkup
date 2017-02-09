@@ -3,6 +3,7 @@ using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using UNM.Parser.ContextExpressions;
+using UNM.Parser.Implementation;
 using UNM.Parser.SimpleLexer;
 
 namespace UNM.Parser
@@ -44,6 +45,7 @@ namespace UNM.Parser
         public void ParseExpression_returns_EmptyExpression_for_zero_length_string()
         {
             var parser = new ContextExpressionParser(new Lexer());
+            parser.Initialize();
 
             var result = parser.ParseExpression("");
 
@@ -184,6 +186,18 @@ namespace UNM.Parser
 
             Assert.That(rightRight, Is.TypeOf<MatchExpression>());
             Assert.That((rightRight as MatchExpression).Match, Is.EqualTo(thirdMatch));
+        }
+
+        [Test]
+        public void ParseExpression_handles_contexts_with_dashes_and_underscores()
+        {
+            var parser = new ContextExpressionParser(new Lexer());
+
+            parser.Initialize();
+
+            var inputExpression = "queststatus_undiscovered";
+
+            var result = parser.ParseExpression(inputExpression);
         }
     }
 }

@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("UnmPaser")]
-[assembly: AssemblyDescription("A library for procedural text generation.")]
+[assembly: AssemblyTitle("UNM.GCS")]
+[assembly: AssemblyDescription("A library for a conversation system built on UNM.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("UnmPaser")]
-[assembly: AssemblyCopyright("Copyright © 2013")]
+[assembly: AssemblyProduct("UnmConversation")]
+[assembly: AssemblyCopyright("Copyright ©  2016")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,6 +19,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("41e8164b-0fc6-4d58-b834-4ff75dddf619")]
-
-[assembly: InternalsVisibleTo("UNM.Parser.Test")]
+[assembly: Guid("605916aa-623d-496e-8651-4ab3c0d091b4")]

@@ -11,7 +11,7 @@
         BY_FRAGMENT,
 
         /// <summary>
-        /// Capitalize each word (text preceeded by a space).
+        /// Capitalize each word (text preceded by a space).
         /// </summary>
         BY_WORDS,
 

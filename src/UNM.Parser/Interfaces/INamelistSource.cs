@@ -1,7 +1,9 @@
-﻿namespace UNM.Parser
+﻿using UNM.Parser.Data;
+
+namespace UNM.Parser.Interfaces
 {
     /// <summary>
-    /// An interface for providing Namelists to the <see cref="NameParser"/>
+    /// An interface for providing Namelists to the <see cref="INameParser"/>
     /// </summary>
     public interface INamelistSource
     {

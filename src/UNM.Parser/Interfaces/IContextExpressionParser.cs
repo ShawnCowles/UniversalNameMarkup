@@ -1,6 +1,6 @@
 ﻿using UNM.Parser.ContextExpressions;
 
-namespace UNM.Parser
+namespace UNM.Parser.Interfaces
 {
     /// <summary>
     /// Parses a context expression into an expression tree.

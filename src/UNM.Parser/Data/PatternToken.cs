@@ -1,4 +1,4 @@
-﻿namespace UNM.Parser
+﻿namespace UNM.Parser.Data
 {
     /// <summary>
     /// A single token from a UNM pattern.

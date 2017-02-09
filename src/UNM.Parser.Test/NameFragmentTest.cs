@@ -2,6 +2,7 @@
 using Ploeh.AutoFixture;
 using Moq;
 using UNM.Parser.ContextExpressions;
+using UNM.Parser.Data;
 
 namespace UNM.Parser
 {

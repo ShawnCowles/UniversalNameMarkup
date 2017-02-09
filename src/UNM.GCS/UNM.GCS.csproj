@@ -5,11 +5,11 @@
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}</ProjectGuid>
+    <ProjectGuid>{605916AA-623D-496E-8651-4AB3C0D091B4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UNM.Parser</RootNamespace>
-    <AssemblyName>UNM.Parser</AssemblyName>
+    <RootNamespace>UNM.GCS</RootNamespace>
+    <AssemblyName>UNM.GCS</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -17,7 +17,7 @@
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <OutputPath>bin\$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\$(Configuration)\UNM.Parser.xml</DocumentationFile>
+    <DocumentationFile>bin\$(Configuration)\UNM.GCS.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -46,43 +46,38 @@
     <Compile Include="..\..\VersionInfo.cs">
       <Link>Properties\VersionInfo.cs</Link>
     </Compile>
-    <Compile Include="CapitalizationScheme.cs" />
-    <Compile Include="ContextExpressions\MatchExpression.cs" />
-    <Compile Include="ContextExpressions\NodeExpression.cs" />
-    <Compile Include="ContextExpressions\NotExpression.cs" />
-    <Compile Include="ContextExpressions\OrExpression.cs" />
-    <Compile Include="ContextExpressions\AndExpression.cs" />
-    <Compile Include="ContextExpressions\EmptyExpression.cs" />
-    <Compile Include="ContextExpressions\IContextExpression.cs" />
+    <Compile Include="Data\ExpressionNodes\AbstractNode.cs" />
+    <Compile Include="Data\ExpressionNodes\OrNode.cs" />
+    <Compile Include="Data\ExpressionNodes\AndNode.cs" />
+    <Compile Include="Data\ExpressionNodes\EqualityNode.cs" />
+    <Compile Include="Data\ExpressionNodes\ExpressionNode.cs" />
+    <Compile Include="Data\ExpressionNodes\VariableNode.cs" />
+    <Compile Include="Data\ExpressionNodes\ValueNode.cs" />
     <Compile Include="ExpressionParseException.cs" />
-    <Compile Include="Implementation\CsvNamelistSource.cs" />
-    <Compile Include="Interfaces\IContextExpressionParser.cs" />
-    <Compile Include="Interfaces\INamelistSource.cs" />
-    <Compile Include="Interfaces\INameParser.cs" />
-    <Compile Include="Interfaces\IPatternLexer.cs" />
-    <Compile Include="Implementation\ContextExpressionParser.cs" />
-    <Compile Include="Implementation\PatternLexer.cs" />
-    <Compile Include="PatternProcessingParameters.cs" />
-    <Compile Include="Data\PatternToken.cs" />
-    <Compile Include="SimpleLexer\ILexer.cs" />
-    <Compile Include="SimpleLexer\Lexer.cs" />
-    <Compile Include="SimpleLexer\Token.cs" />
-    <Compile Include="SimpleLexer\TokenDefinition.cs" />
-    <Compile Include="SimpleLexer\TokenPosition.cs" />
-    <Compile Include="Data\NameFragment.cs" />
-    <Compile Include="Data\NameList.cs" />
-    <Compile Include="Implementation\NameParser.cs" />
-    <Compile Include="PatternParseException.cs" />
+    <Compile Include="Implementation\ConversationSystem.cs" />
+    <Compile Include="Data\OutputSet.cs" />
+    <Compile Include="Data\InputSet.cs" />
+    <Compile Include="Implementation\CsvTopicSource.cs" />
+    <Compile Include="Implementation\UnmParserPostProcessor.cs" />
+    <Compile Include="Implementation\VariableAvailabilityExpressionEvaluator.cs" />
+    <Compile Include="Interfaces\IAvailabilityExpressionEvaluator.cs" />
+    <Compile Include="Interfaces\IConversationSystem.cs" />
+    <Compile Include="Interfaces\IPostProcessor.cs" />
+    <Compile Include="Interfaces\IResponseActionProcessor.cs" />
+    <Compile Include="Interfaces\ITopicSource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\TokenType.cs" />
+    <Compile Include="Data\Response.cs" />
+    <Compile Include="Data\Topic.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UNM.Parser\UNM.Parser.csproj">
+      <Project>{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}</Project>
+      <Name>UNM.Parser</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="SimpleLexer\README.txt" />
+    <None Include="UNM.GCS.nuspec" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="UNM.Parser.nuspec" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
 </Project>

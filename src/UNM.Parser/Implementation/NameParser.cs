@@ -2,13 +2,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using UNM.Parser.Data;
+using UNM.Parser.Interfaces;
 
-namespace UNM.Parser
+namespace UNM.Parser.Implementation
 {
     /// <summary>
     /// The NameParser, processes patterns to produce names.
     /// </summary>
-    public class NameParser
+    public class NameParser : INameParser
     {
         private Random _random;
         private bool _initialized;
@@ -39,6 +41,16 @@ namespace UNM.Parser
         /// <param name="seed">The random seed to use for NameFragment selection.</param>
         public NameParser(INamelistSource namelistSource, int seed)
             : this(namelistSource, new PatternLexer(new SimpleLexer.Lexer()), seed)
+        {
+        }
+
+        /// <summary>
+        /// Construct a new NameParser using the default <see cref="IPatternLexer"/> and the 
+        /// current milliseconds for the random seed.
+        /// </summary>
+        /// <param name="namelistSource">The source for namelists to use.</param>
+        public NameParser(INamelistSource namelistSource)
+            : this(namelistSource, new PatternLexer(new SimpleLexer.Lexer()), DateTime.Now.Millisecond)
         {
         }
 
@@ -225,7 +237,7 @@ namespace UNM.Parser
         {
             if (token.Type == TokenType.TAG_BRANCH_CHANCE)
             {
-                var chance = Int32.Parse(TrimTag(1, token.Value));
+                var chance = int.Parse(TrimTag(1, token.Value));
 
                 return _random.Next(100) < chance;
             }

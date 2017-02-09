@@ -4,6 +4,9 @@ using Moq;
 using NUnit.Framework;
 using Ploeh.AutoFixture;
 using UNM.Parser.ContextExpressions;
+using UNM.Parser.Data;
+using UNM.Parser.Implementation;
+using UNM.Parser.Interfaces;
 
 namespace UNM.Parser
 {
