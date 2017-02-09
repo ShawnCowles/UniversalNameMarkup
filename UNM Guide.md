@@ -1,8 +1,8 @@
 # Fragments, NameLists, Context and Variables #
 
-At its basic level, Universal Name Markup parses the input pattern for tags, and substitutes with values randomly chosen from a namelist. The namelist is a list of fragments, each of which may be chosen and added to the output. The selection behavior can be altered by passing in "context" with the pattern. "Context" is just a list of strings representing the context of the text being generated. "Goblin" for example, may be passed as context when generating the name of a goblin tribe. Framgments may have a logical expression that operates on context to determine if the fragment is a viable subsitution for the present context. Only fragments who have no logical expression, or who's expression passes have the potential to be selected. Context may also be used for branching within the input pattern itself.
+At its basic level, NameParser parses the input pattern for tags, and substitutes with values randomly chosen from a namelist. The namelist is a list of fragments, each of which may be chosen and added to the output. The selection behavior can be altered by passing in "context" with the pattern. "Context" is just a list of strings representing the context of the text being generated. "Goblin" for example, may be passed as context when generating the name of a goblin tribe. Framgments may have a logical expression that operates on context to determine if the fragment is a viable substitution for the present context. Only fragments who have no logical expression, or who's expression passes have the potential to be selected. Context may also be used for branching within the input pattern itself.
 
-Variables may also be passed along with the input pattern. They consist of a name and a value. They are not considered when selecting fragments, but can be used for conditional branching within the pattern, or subsitution with the value of the variable replacing the variable subsitution tag.
+Variables may also be passed along with the input pattern. They consist of a name and a value. They are not considered when selecting fragments, but can be used for conditional branching within the pattern, or substitution with the value of the variable replacing the variable substitution tag.
 
 # Input Pattern Syntax #
 
@@ -28,7 +28,7 @@ The context expression format is straightforward. It should consist of a series 
 
 # NameList File Syntax # 
 
-NameParser requires a namelist source to read namelists from during initialization. The default is the FileStreamNamelistSource that reads from CSV files provided via a stream. The expected CSV format is straightforward, one fragment to a row. The first column should be the name of the namelist the fragment belongs two, the second column should be the fragment itself, the third column  should either be empty, or a context expression for the fragment.
+NameParser requires a namelist source to read namelists from during initialization. The default is the CsvNamelistSource that reads from CSV files provided via a stream. The expected CSV format is straightforward, one fragment to a row. The first column should be the name of the namelist the fragment belongs to, the second column should be the fragment itself, the third column  should either be empty, or a context expression for the fragment.
 
 # Capitalization Scheme #
 

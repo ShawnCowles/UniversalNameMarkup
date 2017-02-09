@@ -24,7 +24,6 @@ namespace UNM.GCS.Implementation
         public UnmParserPostProcessor(INamelistSource namelistSource)
         {
             _nameParser = new NameParser(namelistSource, DateTime.Now.Millisecond);
-
             _nameParser.Initialize();
         }
 

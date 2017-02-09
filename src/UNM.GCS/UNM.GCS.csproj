@@ -15,7 +15,7 @@
     <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <TargetFrameworkProfile>Profile7</TargetFrameworkProfile>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-      <OutputPath>bin\$(Configuration)</OutputPath>
+    <OutputPath>bin\$(Configuration)</OutputPath>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DocumentationFile>bin\$(Configuration)\UNM.GCS.xml</DocumentationFile>
   </PropertyGroup>
@@ -35,6 +35,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CsvHelper.2.16.3.0\lib\portable40-net40+sl5+win8+wp8+wpa81\CsvHelper.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>
@@ -53,6 +57,7 @@
     <Compile Include="Implementation\ConversationSystem.cs" />
     <Compile Include="Data\OutputSet.cs" />
     <Compile Include="Data\InputSet.cs" />
+    <Compile Include="Implementation\CsvTopicSource.cs" />
     <Compile Include="Implementation\UnmParserPostProcessor.cs" />
     <Compile Include="Implementation\VariableAvailabilityExpressionEvaluator.cs" />
     <Compile Include="Interfaces\IAvailabilityExpressionEvaluator.cs" />
@@ -71,6 +76,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="UNM.GCS.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />

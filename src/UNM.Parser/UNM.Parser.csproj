@@ -35,8 +35,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="CsvHelper">
-      <HintPath>..\..\packages\CsvHelper.2.11.1.1\lib\net35-client\CsvHelper.dll</HintPath>
+    <Reference Include="CsvHelper, Version=2.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\CsvHelper.2.16.3.0\lib\portable40-net40+sl5+win8+wp8+wpa81\CsvHelper.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -54,7 +55,7 @@
     <Compile Include="ContextExpressions\EmptyExpression.cs" />
     <Compile Include="ContextExpressions\IContextExpression.cs" />
     <Compile Include="ExpressionParseException.cs" />
-    <Compile Include="Implementation\FileStreamNamelistSource.cs" />
+    <Compile Include="Implementation\CsvNamelistSource.cs" />
     <Compile Include="Interfaces\IContextExpressionParser.cs" />
     <Compile Include="Interfaces\INamelistSource.cs" />
     <Compile Include="Interfaces\INameParser.cs" />
@@ -76,10 +77,10 @@
     <Compile Include="Data\TokenType.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
     <None Include="SimpleLexer\README.txt" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
     <None Include="UNM.Parser.nuspec" />
   </ItemGroup>
   <ItemGroup />
