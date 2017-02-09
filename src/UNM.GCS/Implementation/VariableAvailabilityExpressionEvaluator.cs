@@ -11,10 +11,10 @@ namespace UNM.GCS.Implementation
     /// An implementation of <see cref="IAvailabilityExpressionEvaluator"/> that matches availability
     /// expressions by matching against variables passed into the <see cref="IConversationSystem"/>.
     /// 
-    /// ex: race="Salax" AND location="Storm Point" would pass if the variables "race" and "location"
+    /// ex: race="Salax" &amp;&amp; location="Storm Point" would pass if the variables "race" and "location"
     /// were passed into the <see cref="IConversationSystem"/> with the values of "Salax" and "Storm Point" respectively.
     /// 
-    /// AND OR NOT, and parentheses are all accounted for, ex: (foo="bar" AND NOT up="down") OR right="left"
+    /// AND (&amp;&amp;) OR (||) NOT (!) are all accounted for, ex: (foo="bar" &amp;&amp; ! up="down") || right="left"
     /// </summary>
     public class VariableAvailabilityExpressionEvaluator : IAvailabilityExpressionEvaluator
     {
@@ -24,6 +24,7 @@ namespace UNM.GCS.Implementation
         private const string TOKEN_AND = "and";
         private const string TOKEN_WHITESPACE = "whitespace";
         private const string TOKEN_OR = "or";
+        private const string TOKEN_NOT = "not";
 
         private ILexer _lexer;
 
@@ -49,6 +50,10 @@ namespace UNM.GCS.Implementation
             _lexer.AddDefinition(new TokenDefinition(
                 TOKEN_OR,
                 new Regex("\\|\\|")));
+
+            _lexer.AddDefinition(new TokenDefinition(
+                TOKEN_NOT,
+                new Regex("!")));
 
             _lexer.AddDefinition(new TokenDefinition(
                 TOKEN_VALUE,
@@ -137,6 +142,22 @@ namespace UNM.GCS.Implementation
                         var orNode = new OrNode(token);
                         orNode.Left = nodeStack.Pop();
                         nodeStack.Push(orNode);
+                        break;
+                    case TOKEN_NOT:
+                        if (nodeStack.Any() && !(nodeStack.Peek() is ExpressionNode))
+                        {
+                            throw new ExpressionParseException(string.Format(
+                                "NOT operator at {0} with preceding token that isn't an expression.",
+                                token.Position.Index));
+                        }
+                        var notNode = new NotNode(token);
+
+                        if(nodeStack.Any())
+                        {
+                            nodeStack.Peek().Right = notNode;
+                        }
+
+                        nodeStack.Push(notNode);
                         break;
                 }
             }

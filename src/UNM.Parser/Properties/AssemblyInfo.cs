@@ -23,3 +23,7 @@ using System.Runtime.InteropServices;
 [assembly: Guid("41e8164b-0fc6-4d58-b834-4ff75dddf619")]
 
 [assembly: InternalsVisibleTo("UNM.Parser.Test")]
+
+[assembly: AssemblyVersion("2.0.1")]
+[assembly: AssemblyFileVersion("2.0.1")]
+[assembly: AssemblyInformationalVersion("2.0.1")]

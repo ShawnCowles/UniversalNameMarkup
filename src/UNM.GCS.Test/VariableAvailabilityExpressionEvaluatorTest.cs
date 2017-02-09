@@ -256,5 +256,61 @@ namespace UNM.GCS.Test
 
             Assert.False(_evaluator.Evaluate(expression, new Dictionary<string, string>()));
         }
+
+        [Test]
+        public void Evaluate_handles_NOT_statements()
+        {
+            var variable = _fixture.Create<string>();
+            var value = _fixture.Create<string>();
+
+            var variables = new Dictionary<string, string>();
+            variables.Add(variable, value);
+
+            var expression = $"!{variable}=\"{value}\"";
+
+            Assert.False(_evaluator.Evaluate(expression, variables));
+
+            variables[variable] = _fixture.Create<string>();
+
+            Assert.True(_evaluator.Evaluate(expression, variables));
+        }
+
+        [Test]
+        public void Evaluate_handles_NOT_statements_within_other_statements()
+        {
+            var variableA = _fixture.Create<string>();
+            var variableB = _fixture.Create<string>();
+            var valueA = _fixture.Create<string>();
+            var valueB = _fixture.Create<string>();
+
+            var variables = new Dictionary<string, string>();
+            variables.Add(variableA, valueA);
+            variables.Add(variableB, _fixture.Create<string>());
+
+            var expression = $"{variableA}=\"{valueA}\" && ! {variableB}=\"{valueB}\"";
+                
+            Assert.True(_evaluator.Evaluate(expression, variables));
+            
+            variables[variableB] = valueB;
+
+            Assert.False(_evaluator.Evaluate(expression, variables));
+        }
+
+        [Test]
+        public void Evaluate_handles_NOT_statements_within_other_statements_false_and_not_false()
+        {
+            var variableA = _fixture.Create<string>();
+            var variableB = _fixture.Create<string>();
+            var valueA = _fixture.Create<string>();
+            var valueB = _fixture.Create<string>();
+
+            var variables = new Dictionary<string, string>();
+            variables.Add(variableA, _fixture.Create<string>());
+            variables.Add(variableB, _fixture.Create<string>());
+
+            var expression = $"{variableA}=\"{valueA}\" && ! {variableB}=\"{valueB}\"";
+
+            Assert.False(_evaluator.Evaluate(expression, variables));
+        }
     }
 }

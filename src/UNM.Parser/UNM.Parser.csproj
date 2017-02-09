@@ -43,9 +43,6 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\VersionInfo.cs">
-      <Link>Properties\VersionInfo.cs</Link>
-    </Compile>
     <Compile Include="CapitalizationScheme.cs" />
     <Compile Include="ContextExpressions\MatchExpression.cs" />
     <Compile Include="ContextExpressions\NodeExpression.cs" />

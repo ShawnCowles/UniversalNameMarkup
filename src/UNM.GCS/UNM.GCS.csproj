@@ -43,10 +43,8 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\VersionInfo.cs">
-      <Link>Properties\VersionInfo.cs</Link>
-    </Compile>
     <Compile Include="Data\ExpressionNodes\AbstractNode.cs" />
+    <Compile Include="Data\ExpressionNodes\NotNode.cs" />
     <Compile Include="Data\ExpressionNodes\OrNode.cs" />
     <Compile Include="Data\ExpressionNodes\AndNode.cs" />
     <Compile Include="Data\ExpressionNodes\EqualityNode.cs" />
