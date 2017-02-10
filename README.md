@@ -17,7 +17,8 @@ or
 The GenericConversationSystem is a dialog system built to take advantage 
 
 See the [UNM Guide](UNM Guide.md) for documentation on UNM and NameParser
-See the [GCS Guide](UNM Guide.md) for documentation on the GenericConversationSystem
+
+See the [GCS Guide](GCS Guide.md) for documentation on the GenericConversationSystem
 
 --------------------------------------------
 
