@@ -1,0 +1,9 @@
+﻿{
+  "supports": {},
+  "dependencies": {
+    "CsvHelper": "2.16.3"
+  },
+  "frameworks": {
+    "netstandard1.3": {}
+  }
+}
