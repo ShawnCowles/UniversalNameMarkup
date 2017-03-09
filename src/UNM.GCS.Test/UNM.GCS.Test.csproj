@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>UNM.GCS.Test</RootNamespace>
     <AssemblyName>UNM.GCS.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -61,16 +61,16 @@
     <Compile Include="VariableAvailabilityExpressionEvaluatorTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UNM.GCS\UNM.GCS.csproj">
-      <Project>{605916AA-623D-496E-8651-4AB3C0D091B4}</Project>
-      <Name>UNM.GCS</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\UNM.GCS\UNM.GCS.csproj">
+      <Project>{b377650b-036c-49a1-ac55-fdb0d6faa162}</Project>
+      <Name>UNM.GCS</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

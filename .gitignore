@@ -1,15 +1,5 @@
 *.suo
-output/
 packages/
-src/UNM.Lexer.Test/obj/
-src/UNM.Lexer/obj/
-src/UNM.Parser.Test/obj/
-src/UNM.Parser/obj/
-TestResults/
+obj/
+bin/
 .vs/
-src/UNM.GCS.Test/bin/
-src/UNM.GCS.Test/obj/
-src/UNM.GCS/obj/
-src/UNM.Parser.Test/bin/
-src/UNM.GCS/bin/
-src/UNM.Parser/bin/

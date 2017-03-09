@@ -1,15 +1,9 @@
-call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" x86_amd64
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\Tools\VsDevCmd.bat"
 
-cd src\UNM.Parser
-nuget pack UNM.Parser.csproj -Symbols -Build -IncludeReferencedProjects -Properties Configuration=Release;Platform=AnyCpu
-nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
-del *.nupkg
+nuget push src\UNM.Parser\bin\Release\*.nupkg -Source https://www.nuget.org/api/v2/package
+del src\UNM.Parser\bin\Release\*.nupkg
 
-cd ../..
-
-cd src\UNM.GCS
-nuget pack UNM.GCS.csproj -Symbols -Build -IncludeReferencedProjects -Properties Configuration=Release;Platform=AnyCpu
-nuget push *.nupkg -Source https://www.nuget.org/api/v2/package
-del *.nupkg
+nuget push src\UNM.GCS\bin\Release\*.nupkg -Source https://www.nuget.org/api/v2/package
+del src\UNM.GCS\bin\Release\*.nupkg
 
 echo "Deployment Complete"

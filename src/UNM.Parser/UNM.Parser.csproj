@@ -1,78 +1,36 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UNM.Parser</RootNamespace>
-    <AssemblyName>UNM.Parser</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <OutputPath>bin\$(Configuration)</OutputPath>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\$(Configuration)\UNM.Parser.xml</DocumentationFile>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <Authors>Shawn Cowles</Authors>
+    <Version>2.0.4</Version>
+    <Description>A library for procedural text generation using markup strings and recursive word selection. Please check the readme at the project url for a syntax and usage guide.</Description>
+    <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
+    <Copyright>2013</Copyright>
+    <PackageProjectUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</PackageProjectUrl>
+    <RepositoryUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <NeutralLanguage />
+    <Company>Twinning Software</Company>
+    <PackageId>Twinning.UNM</PackageId>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <Product>Universal Name Markup Parser</Product>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
+    <DocumentationFile>bin\Debug\netstandard1.4\UNM.Parser.xml</DocumentationFile>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DocumentationFile>bin\Release\netstandard1.4\UNM.Parser.xml</DocumentationFile>
+    <TreatWarningsAsErrors>True</TreatWarningsAsErrors>
+    <TreatSpecificWarningsAsErrors />
   </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="CapitalizationScheme.cs" />
-    <Compile Include="ContextExpressions\MatchExpression.cs" />
-    <Compile Include="ContextExpressions\NodeExpression.cs" />
-    <Compile Include="ContextExpressions\NotExpression.cs" />
-    <Compile Include="ContextExpressions\OrExpression.cs" />
-    <Compile Include="ContextExpressions\AndExpression.cs" />
-    <Compile Include="ContextExpressions\EmptyExpression.cs" />
-    <Compile Include="ContextExpressions\IContextExpression.cs" />
-    <Compile Include="ExpressionParseException.cs" />
-    <Compile Include="Implementation\CsvNamelistSource.cs" />
-    <Compile Include="Interfaces\IContextExpressionParser.cs" />
-    <Compile Include="Interfaces\INamelistSource.cs" />
-    <Compile Include="Interfaces\INameParser.cs" />
-    <Compile Include="Interfaces\IPatternLexer.cs" />
-    <Compile Include="Implementation\ContextExpressionParser.cs" />
-    <Compile Include="Implementation\PatternLexer.cs" />
-    <Compile Include="PatternProcessingParameters.cs" />
-    <Compile Include="Data\PatternToken.cs" />
-    <Compile Include="SimpleLexer\ILexer.cs" />
-    <Compile Include="SimpleLexer\Lexer.cs" />
-    <Compile Include="SimpleLexer\Token.cs" />
-    <Compile Include="SimpleLexer\TokenDefinition.cs" />
-    <Compile Include="SimpleLexer\TokenPosition.cs" />
-    <Compile Include="Data\NameFragment.cs" />
-    <Compile Include="Data\NameList.cs" />
-    <Compile Include="Implementation\NameParser.cs" />
-    <Compile Include="PatternParseException.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\TokenType.cs" />
+    <PackageReference Include="CsvHelper" Version="2.16.3" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-    <None Include="SimpleLexer\README.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="UNM.Parser.nuspec" />
-  </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+
 </Project>

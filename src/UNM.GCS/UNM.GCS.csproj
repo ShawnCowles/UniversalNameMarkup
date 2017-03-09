@@ -1,74 +1,26 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{605916AA-623D-496E-8651-4AB3C0D091B4}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UNM.GCS</RootNamespace>
-    <AssemblyName>UNM.GCS</AssemblyName>
-    <DefaultLanguage>en-US</DefaultLanguage>
-    <FileAlignment>512</FileAlignment>
-    <ProjectTypeGuids>{786C830F-07A1-408B-BD7F-6EE04809D6DB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <TargetFrameworkVersion>v5.0</TargetFrameworkVersion>
-    <OutputPath>bin\$(Configuration)</OutputPath>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DocumentationFile>bin\$(Configuration)\UNM.GCS.xml</DocumentationFile>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <PackageId>Twinning.UNM.GCS</PackageId>
+    <Version>2.0.3</Version>
+    <Authors>Shawn Cowles</Authors>
+    <Company>Twinning Software</Company>
+    <Product>Generic Conversation System</Product>
+    <Description>A library for a procedural text dialog system built on top of Universal Name Markup. Please check the readme at the project url for a syntax and usage guide.</Description>
+    <Copyright>2016</Copyright>
+    <PackageLicenseUrl>https://opensource.org/licenses/mit-license.php</PackageLicenseUrl>
+    <PackageProjectUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</PackageProjectUrl>
+    <RepositoryUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
+
   <ItemGroup>
-    <Compile Include="Data\ExpressionNodes\AbstractNode.cs" />
-    <Compile Include="Data\ExpressionNodes\NotNode.cs" />
-    <Compile Include="Data\ExpressionNodes\OrNode.cs" />
-    <Compile Include="Data\ExpressionNodes\AndNode.cs" />
-    <Compile Include="Data\ExpressionNodes\EqualityNode.cs" />
-    <Compile Include="Data\ExpressionNodes\ExpressionNode.cs" />
-    <Compile Include="Data\ExpressionNodes\VariableNode.cs" />
-    <Compile Include="Data\ExpressionNodes\ValueNode.cs" />
-    <Compile Include="ExpressionParseException.cs" />
-    <Compile Include="Implementation\ConversationSystem.cs" />
-    <Compile Include="Data\OutputSet.cs" />
-    <Compile Include="Data\InputSet.cs" />
-    <Compile Include="Implementation\CsvTopicSource.cs" />
-    <Compile Include="Implementation\UnmParserPostProcessor.cs" />
-    <Compile Include="Implementation\VariableAvailabilityExpressionEvaluator.cs" />
-    <Compile Include="Interfaces\IAvailabilityExpressionEvaluator.cs" />
-    <Compile Include="Interfaces\IConversationSystem.cs" />
-    <Compile Include="Interfaces\IPostProcessor.cs" />
-    <Compile Include="Interfaces\IResponseActionProcessor.cs" />
-    <Compile Include="Interfaces\ITopicSource.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\Response.cs" />
-    <Compile Include="Data\Topic.cs" />
+    <PackageReference Include="CsvHelper" Version="2.16.3" />
   </ItemGroup>
+
   <ItemGroup>
-    <ProjectReference Include="..\UNM.Parser\UNM.Parser.csproj">
-      <Project>{31A30E69-A8C9-4059-B2A7-0EF2C5D98A69}</Project>
-      <Name>UNM.Parser</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\UNM.Parser\UNM.Parser.csproj" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="project.json" />
-    <None Include="UNM.GCS.nuspec" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
+
 </Project>
