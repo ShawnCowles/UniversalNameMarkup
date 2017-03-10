@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using CsvHelper;
 using UNM.GCS.Data;
 using UNM.GCS.Interfaces;
@@ -25,12 +26,13 @@ namespace UNM.GCS.Implementation
         /// Construct a new CsvTopicSource and load topics.
         /// </summary>
         /// <param name="sourceStream">The stream to load topics from.</param>
-        public CsvTopicSource(Stream sourceStream)
+        /// <param name="hiddenTopicNames">The names of topics which shouldn't be user visible.</param>
+        public CsvTopicSource(Stream sourceStream, IEnumerable<string> hiddenTopicNames = null)
         {
-            LoadTopicsFromStream(sourceStream);
+            LoadTopicsFromStream(sourceStream, hiddenTopicNames);
         }
 
-        private void LoadTopicsFromStream(Stream sourceStream)
+        private void LoadTopicsFromStream(Stream sourceStream, IEnumerable<string> hiddenTopicNames)
         {
             _topics = new List<Topic>();
 
@@ -58,7 +60,9 @@ namespace UNM.GCS.Implementation
                 
                 foreach (var topicName in responsesPerTopic.Keys)
                 {
-                    _topics.Add(new Topic(topicName, responsesPerTopic[topicName]));
+                    var hidden = hiddenTopicNames != null && hiddenTopicNames.Contains(topicName);
+
+                    _topics.Add(new Topic(topicName, responsesPerTopic[topicName], !hidden));
                 }
             }
         }
