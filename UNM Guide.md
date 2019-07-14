@@ -22,7 +22,7 @@ The input pattern passed into the NameParser should be a text string containing 
 
 # Context Expression Syntax #
 
-The context expression format is straightforward. It should consist of a series of context names, joined by boolean operators. If a context name is present it will evaluate to true, false otherwise. AND (%%) OR (||) and NOT(!) operators are supported.
+The context expression format is straightforward. It should consist of a series of context names, joined by boolean operators. If a context name is present it will evaluate to true, false otherwise. AND (%%) OR (||) and NOT(!) operators are supported, as are parenthesis.
 
     a_context || another_context && ! some_other_one
 

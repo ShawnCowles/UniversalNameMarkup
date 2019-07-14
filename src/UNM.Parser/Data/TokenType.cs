@@ -79,5 +79,15 @@
         /// Token defining whitespace
         /// </summary>
         WHITESPACE,
+
+        /// <summary>
+        /// Token defining an open parentheses
+        /// </summary>
+        OPEN_PAREN,
+
+        /// <summary>
+        /// Token defining a closed parentheses
+        /// </summary>
+        CLOSED_PAREN,
     }
 }

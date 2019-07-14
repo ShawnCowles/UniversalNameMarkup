@@ -14,6 +14,7 @@
     <RepositoryUrl>https://bitbucket.org/shawn_cowles/universal-name-markup</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageReleaseNotes>Appropriately apply user visibility filtering in ConversationSystem.</PackageReleaseNotes>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

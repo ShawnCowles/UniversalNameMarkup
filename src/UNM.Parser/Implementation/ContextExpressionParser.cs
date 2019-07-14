@@ -61,6 +61,14 @@ namespace UNM.Parser.Implementation
                 TokenType.WHITESPACE.ToString(),
                 new Regex(@"\s")));
 
+            _lexer.AddDefinition(new TokenDefinition(
+                TokenType.OPEN_PAREN.ToString(),
+                new Regex(@"\(")));
+
+            _lexer.AddDefinition(new TokenDefinition(
+                TokenType.CLOSED_PAREN.ToString(),
+                new Regex(@"\)")));
+
             _initialized = true;
         }
 
@@ -76,7 +84,8 @@ namespace UNM.Parser.Implementation
                 throw new Exception("ContextExpressionParser must be initialized before use.");
             }
 
-            var stack = new Stack<IContextExpression>();
+            var stack = new Stack<Stack<IContextExpression>>();
+            stack.Push(new Stack<IContextExpression>());
 
             try
             {
@@ -93,16 +102,31 @@ namespace UNM.Parser.Implementation
                         case TokenType.WHITESPACE:
                             break;
                         case TokenType.EXPRESSION_MATCH:
-                            AttachToStack(stack, new MatchExpression(token.Value));
+                            AttachToStack(stack.Peek(), new MatchExpression(token.Value));
                             break;
                         case TokenType.EXPRESSION_NOT:
-                            HandleNot(stack, new NotExpression());
+                            HandleParent(stack.Peek(), new NotExpression());
                             break;
                         case TokenType.EXPRESSION_AND:
-                            HandleNode(token, stack, new AndExpression());
+                            HandleNode(token, stack.Peek(), new AndExpression());
                             break;
                         case TokenType.EXPRESSION_OR:
-                            HandleNode(token, stack, new OrExpression());
+                            HandleNode(token, stack.Peek(), new OrExpression());
+                            break;
+                        case TokenType.OPEN_PAREN:
+                            stack.Push(new Stack<IContextExpression>());
+                            break;
+                        case TokenType.CLOSED_PAREN:
+                            if(stack.Count < 2)
+                            {
+                                throw new ExpressionParseException(string.Format(
+                                    "Mismatched parenthesis: {0} at position: {1} without matching (",
+                                    token.Type, token.Position));
+                            }
+
+                            var parenRoot = stack.Peek().Peek();
+                            stack.Pop();
+                            AttachToStack(stack.Peek(), parenRoot);
                             break;
                         default:
                             throw new ExpressionParseException(string.Format(
@@ -117,19 +141,26 @@ namespace UNM.Parser.Implementation
                     ex);
             }
 
-            if (!stack.Any())
+            if(stack.Count > 1)
+            {
+                throw new ExpressionParseException(string.Format(
+                    "Exception in lexing expression {0}, expression contains unclosed parenthesis.",
+                    expression));
+            }
+
+            if (!stack.First().Any())
             {
                 return new EmptyExpression();
             }
 
-            if(stack.Count > 1)
+            if(stack.First().Count > 1)
             {
                 throw new ExpressionParseException(string.Format(
                     "Exception in lexing expression {0}, expression contains multiple root level nodes.",
                     expression));
             }
 
-            return stack.First();
+            return stack.First().First();
         }
 
         private void AttachToStack(Stack<IContextExpression> stack, IContextExpression newNode)
@@ -138,16 +169,16 @@ namespace UNM.Parser.Implementation
             {
                 var parent = stack.Pop();
 
-                if (parent is NotExpression)
+                if (parent is ParentExpression)
                 {
-                    if ((parent as NotExpression).Child != null)
+                    if ((parent as ParentExpression).Child != null)
                     {
                         throw new ExpressionParseException(string.Format(
                                 "Parent for {0} already full.",
                                 newNode.GetType().Name));
                     }
 
-                    (parent as NotExpression).Child = newNode;
+                    (parent as ParentExpression).Child = newNode;
 
                     AttachToStack(stack, parent);
                 }
@@ -172,7 +203,7 @@ namespace UNM.Parser.Implementation
             }
         }
 
-        private void HandleNot(Stack<IContextExpression> stack, NotExpression node)
+        private void HandleParent(Stack<IContextExpression> stack, ParentExpression node)
         {
             stack.Push(node);
         }

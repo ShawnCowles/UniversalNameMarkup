@@ -3,26 +3,20 @@
 namespace UNM.Parser.ContextExpressions
 {
     /// <summary>
-    /// A context expression that returns the logical NOT of a sub expression.
+    /// An abstract base class for expressions that contain a child expression.
     /// </summary>
-    public class NotExpression : ParentExpression
+    public abstract class ParentExpression : IContextExpression
     {
-        
         /// <summary>
-        /// Construct a new NotExpression.
+        /// The child expression.
         /// </summary>
-        public NotExpression()
-        {
-        }
+        public IContextExpression Child { get; set; }
 
         /// <summary>
         /// Test if the provided context matches this expression.
         /// </summary>
         /// <param name="context">The context to used.</param>
         /// <returns>True if <paramref name="context"/> matches this expression.</returns>
-        public override bool Matches(IEnumerable<string> context)
-        {
-            return !Child.Matches(context);
-        }
+        public abstract bool Matches(IEnumerable<string> context);
     }
 }
